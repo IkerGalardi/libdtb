@@ -33,7 +33,7 @@ dtb *dtb_fromptr(void *ptr)
 
 dtb_node dtb_find(dtb *devicetree, const char *path)
 {
-    uint32_t *struct_block = (uint8_t *)devicetree + DTB_BYTESWAP32(devicetree->off_dt_struct);
+    uint32_t *struct_block = (uint32_t *)((uint8_t *)devicetree + DTB_BYTESWAP32(devicetree->off_dt_struct));
 
     // The first block from the struct node should be a DTB_BEGIN_NODE as it should be refering to
     // the root node of the device tree. If that is not the case we return null to signal an error.
