@@ -48,24 +48,3 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
     // TODO: actually implement the searching of the node
     assert(0);
 }
-
-int main(int argc, char **argv)
-{
-    int fd = open(argv[1], O_RDONLY);
-    assert(fd != -1);
-
-    struct stat buf;
-    assert(fstat(fd, &buf) == 0);
-
-    void *ptr = mmap(NULL, buf.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-
-    dtb *devicetree = dtb_fromptr(ptr);
-    if (devicetree == NULL) {
-        printf("Malformed device tree\n");
-        return 0;
-    }
-
-    dtb_foreach_rsvmap_entry(devicetree, {
-        printf("Reserved memory at %lx of size %lx\n", entry->address, entry->size);
-    });
-}

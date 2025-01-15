@@ -1,1 +1,3 @@
 bin/*
+libdtb.a
+libdtb-debug.a
