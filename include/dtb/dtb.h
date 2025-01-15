@@ -42,6 +42,8 @@ dtb *dtb_fromptr(void *ptr);
 
 dtb_node dtb_find(dtb *devicetree, const char *path);
 
+#define dtb_foreach_property(dtb, x) ;
+
 #define dtb_foreach_rsvmap_entry(dtb, x) {                                      \
         uint8_t *__dtb_ptr = (uint8_t *)dtb;                                    \
         uint8_t *__entry_ptr = __dtb_ptr + DTB_BYTESWAP32(dtb->off_mem_rsvmap); \

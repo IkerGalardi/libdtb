@@ -31,6 +31,28 @@ int main(int argc, char **argv)
         printf("qemu-virt: dtb_find '/' " ANSI_COLOR_GREEN "SUCCESS\n" ANSI_COLOR_RESET);
     }
 
+    bool found_addr_cell = false;
+    bool found_size_cell = false;
+    bool found_compatible = false;
+    bool found_model = false;
+    dtb_foreach_property(devicetree, root_node, {
+        if (strcmp(propname, "#address-cells") == 0) {
+            found_addr_cell = true;
+        } else if (strcmp(propname, "#size-cells") == 0) {
+            found_size_cell = true;
+        } else if (strcmp(propname, "compatible") == 0) {
+            found_compatible = true;
+        } else if (strcmp(propname, "model") == 0) {
+            found_model = true;
+        }
+    });
+    if (found_addr_cell == false || found_size_cell == false || found_compatible == false || found_model == false) {
+        printf("qemu-virt: dtb_foreach_property '/' " ANSI_COLOR_RED "FAILED\n" ANSI_COLOR_RESET);
+        exit(1);
+    } else {
+        printf("qemu-virt: dtb_foreach_property '/' " ANSI_COLOR_GREEN "SUCCESS\n" ANSI_COLOR_RESET);
+    }
+
     dtb_node memory_node = dtb_find(devicetree, "/memory");
     if (memory_node == NULL) {
         printf("qemu-virt: dtb_find '/memory' " ANSI_COLOR_RED "FAILED\n" ANSI_COLOR_RESET);
