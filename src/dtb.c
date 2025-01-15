@@ -46,5 +46,5 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
     }
 
     // TODO: actually implement the searching of the node
-    assert(0);
+    return NULL;
 }

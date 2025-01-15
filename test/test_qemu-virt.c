@@ -22,4 +22,29 @@ int main(int argc, char **argv)
     } else {
         printf("qemu-virt: dtb_foreach_rsvmap_entry " ANSI_COLOR_GREEN "SUCCESS\n" ANSI_COLOR_RESET);
     }
+
+    dtb_node root_node = dtb_find(devicetree, "/");
+    if (root_node == NULL) {
+        printf("qemu-virt: dtb_find '/' " ANSI_COLOR_RED "FAILED\n" ANSI_COLOR_RESET);
+        exit(1);
+    } else {
+        printf("qemu-virt: dtb_find '/' " ANSI_COLOR_GREEN "SUCCESS\n" ANSI_COLOR_RESET);
+    }
+
+    dtb_node memory_node = dtb_find(devicetree, "/memory");
+    if (memory_node == NULL) {
+        printf("qemu-virt: dtb_find '/memory' " ANSI_COLOR_RED "FAILED\n" ANSI_COLOR_RESET);
+        exit(1);
+    } else {
+        printf("qemu-virt: dtb_find '/memory' " ANSI_COLOR_RED "FAILED\n" ANSI_COLOR_RESET);
+    }
+
+    dtb_node serial_node = dtb_find(devicetree, "/soc/serial");
+    if (serial_node == NULL) {
+        printf("qemu-virt: dtb_find '/soc/serial' " ANSI_COLOR_RED "FAILED\n" ANSI_COLOR_RESET);
+        exit(1);
+    } else {
+        printf("qemu-virt: dtb_find '/soc/serial' " ANSI_COLOR_GREEN "SUCCESS\n" ANSI_COLOR_RESET);
+    }
+
 }
