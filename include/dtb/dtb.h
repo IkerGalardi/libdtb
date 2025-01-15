@@ -31,12 +31,16 @@ typedef struct __attribute__((packed))
     uint64_t size;
 } dtb_rsvmap_entry;
 
+typedef uint32_t* dtb_node;
+
 /**
  * @brief Create a device tree object from a pointer.
  *
  * @param ptr: pointer to a buffer containing the device tree.
  */
 dtb *dtb_fromptr(void *ptr);
+
+dtb_node dtb_find(dtb *devicetree, const char *path);
 
 #define dtb_foreach_rsvmap_entry(dtb, x) {                                      \
         uint8_t *__dtb_ptr = (uint8_t *)dtb;                                    \
