@@ -25,11 +25,26 @@ typedef struct
     uint32_t size_dt_struct;
 } dtb;
 
+typedef struct __attribute__((packed))
+{
+    uint64_t address;
+    uint64_t size;
+} dtb_rsvmap_entry;
+
 /**
  * @brief Create a device tree object from a pointer.
  *
  * @param ptr: pointer to a buffer containing the device tree.
  */
 dtb *dtb_fromptr(void *ptr);
+
+#define dtb_foreach_rsvmap_entry(dtb, x) {                                      \
+        uint8_t *__dtb_ptr = (uint8_t *)dtb;                                    \
+        uint8_t *__entry_ptr = __dtb_ptr + DTB_BYTESWAP32(dtb->off_mem_rsvmap); \
+        dtb_rsvmap_entry *entry = (dtb_rsvmap_entry *)__entry_ptr;              \
+        while (!(entry->address == 0 && entry->size == 0)) {                    \
+            x                                                                   \
+        }                                                                       \
+    }
 
 #endif // _DTB_H

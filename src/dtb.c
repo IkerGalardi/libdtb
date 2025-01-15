@@ -40,4 +40,8 @@ int main(int argc, char **argv)
         printf("Malformed device tree\n");
         return 0;
     }
+
+    dtb_foreach_rsvmap_entry(devicetree, {
+        printf("Reserved memory at %lx of size %lx\n", entry->address, entry->size);
+    });
 }
