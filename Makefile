@@ -15,7 +15,7 @@ bin/dtb.o: include/dtb/dtb.h src/dtb.c
 bin/dtb-debug.o: include/dtb/dtb.h src/dtb.c
 	$(CC) -c src/dtb.c -o bin/dtb-debug.o -ggdb $(CFLAGS)
 
-bin/test_qemu-virt: bin/dtb-debug.o test/test_qemu-virt.c test/test.h
+bin/test_qemu-virt: bin/dtb-debug.o test/test_qemu-virt.c test/test.h include/dtb/dtb.h
 	$(CC) -c test/test_qemu-virt.c -o bin/test_qemu-virt.o $(CFLAGS) -ggdb
 	$(CC) -o bin/test_qemu-virt bin/dtb-debug.o bin/test_qemu-virt.o -ggdb
 
