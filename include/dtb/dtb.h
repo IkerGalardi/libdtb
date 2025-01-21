@@ -8,6 +8,15 @@
 
 #define DTB_BYTESWAP64(num) (BYTESWAP32(num) << 32 | BYTESWAP32((num) >> 32))
 
+#define DTB_CONCAT_HELPER(a, b) a ## b
+#define DTB_CONCAT(a, b) DTB_CONCAT_HELPER(a, b)
+
+#define DTB_BEGIN_NODE DTB_BYTESWAP32((uint32_t)0x1)
+#define DTB_END_NODE   DTB_BYTESWAP32((uint32_t)0x2)
+#define DTB_PROP       DTB_BYTESWAP32((uint32_t)0x3)
+#define DTB_NOP        DTB_BYTESWAP32((uint32_t)0x4)
+#define DTB_END        DTB_BYTESWAP32((uint32_t)0x9)
+
 /**
  * @brief Device tree handle
  */
@@ -42,7 +51,27 @@ dtb *dtb_fromptr(void *ptr);
 
 dtb_node dtb_find(dtb *devicetree, const char *path);
 
-#define dtb_foreach_property(dtb, x) ;
+#define dtb_property_name(node) (char *)((uint32_t *)node+1)
+
+#define dtb_foreach_property(dtb, node, x) { \
+    char *__strings = (char *)dtb + DTB_BYTESWAP32(dtb->off_dt_strings); \
+    uint32_t *__prop = node + 1; \
+    while (1) { \
+        if (*__prop == DTB_NOP) { \
+            __prop++;\
+        } else if (*__prop == DTB_PROP) {\
+            uint32_t proplen = DTB_BYTESWAP32(*(__prop + 1));\
+            uint32_t __stroff = DTB_BYTESWAP32(*(__prop + 2));\
+            char *propname = __strings + __stroff; \
+            uint32_t __attribute__((unused)) *prop = __prop + 3; \
+            x \
+            __prop += proplen / sizeof(uint32_t) + 2; \
+        } else if (*__prop == DTB_END || *__prop == DTB_BEGIN_NODE || *__prop == DTB_END_NODE) { \
+            break;\
+        }\
+        __prop++; \
+    } \
+}
 
 #define dtb_foreach_rsvmap_entry(dtb, x) {                                      \
         uint8_t *__dtb_ptr = (uint8_t *)dtb;                                    \
