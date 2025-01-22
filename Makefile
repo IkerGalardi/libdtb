@@ -26,5 +26,10 @@ bin/test_qemu-virt: bin/dtb-debug.o bin/utils-debug.o test/test_qemu-virt.c test
 	$(CC) -c test/test_qemu-virt.c -o bin/test_qemu-virt.o $(CFLAGS) -ggdb
 	$(CC) -o bin/test_qemu-virt bin/dtb-debug.o bin/utils-debug.o bin/test_qemu-virt.o -ggdb
 
-test: bin/test_qemu-virt
+bin/test_utils: bin/utils-debug.o test/test_utils.c test/test.h
+	$(CC) -c test/test_utils.c -o bin/test_utils.o -Isrc $(CFLAGS) -ggdb
+	$(CC) -o bin/test_utils bin/utils-debug.o bin/test_utils.o -ggdb
+
+test: bin/test_utils bin/test_qemu-virt
+	@ bin/test_utils
 	@ bin/test_qemu-virt dtbfiles/qemu-virt.dtb
