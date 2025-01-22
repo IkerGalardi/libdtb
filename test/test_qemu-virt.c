@@ -2,9 +2,10 @@
 
 int main(int argc, char **argv)
 {
-    assert((argc > 1));
+    (void)argc;
+    (void)argv;
 
-    dtb *devicetree = dtb_fromptr(map_device_tree(argv[1]));
+    dtb *devicetree = dtb_fromptr(map_device_tree("dtbfiles/qemu-virt.dtb"));
     if (devicetree == NULL) {
         printf("qemu-virt: dtb_fromptr " ANSI_COLOR_RED "FAILED" ANSI_COLOR_RESET "\n");
         exit(1);
