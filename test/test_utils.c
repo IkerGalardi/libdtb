@@ -9,19 +9,19 @@ int main(int argc, char **argv)
     if (strcmp_nodename("memory", "memory@800000") == 0) {
         printf("utils: strcmp_nodename 'memory' == 'memory@800000' " ANSI_COLOR_GREEN "SUCCESS" ANSI_COLOR_RESET "\n");
     } else {
-        printf("utils: strcmp_nodename 'memory' == 'memory@800000' " ANSI_COLOR_RED "FAILED" ANSI_COLOR_RESET "\n");
+        printf("utils: strcmp_nodename 'memory' == 'memory@800000' " ANSI_COLOR_RED "  FAILED" ANSI_COLOR_RESET "\n");
     }
 
     if (strcmp_nodename("soc", "soc") == 0) {
-        printf("utils: strcmp_nodename 'soc' == 'soc' " ANSI_COLOR_GREEN "SUCCESS" ANSI_COLOR_RESET "\n");
+        printf("utils: strcmp_nodename 'soc' == 'soc' " ANSI_COLOR_GREEN "             SUCCESS" ANSI_COLOR_RESET "\n");
     } else {
-        printf("utils: strcmp_nodename 'soc' == 'soc' " ANSI_COLOR_RED "FAILED" ANSI_COLOR_RESET "\n");
+        printf("utils: strcmp_nodename 'soc' == 'soc' " ANSI_COLOR_RED "               FAILED" ANSI_COLOR_RESET "\n");
     }
 
     if (strcmp_nodename("memory", "soc") != 0) {
-        printf("utils: strcmp_nodename 'memory' != 'soc' " ANSI_COLOR_GREEN "SUCCESS" ANSI_COLOR_RESET "\n");
+        printf("utils: strcmp_nodename 'memory' != 'soc' " ANSI_COLOR_GREEN "          SUCCESS" ANSI_COLOR_RESET "\n");
     } else {
-        printf("utils: strcmp_nodename 'memory' != 'soc' " ANSI_COLOR_RED "FAILED" ANSI_COLOR_RESET "\n");
+        printf("utils: strcmp_nodename 'memory' != 'soc' " ANSI_COLOR_RED "            FAILED" ANSI_COLOR_RESET "\n");
     }
 
     uint32_t tokenlist[] = {
@@ -49,9 +49,9 @@ int main(int argc, char **argv)
     uint32_t *memory_node = &tokenlist[17];
     uint32_t *result = skip_until_same_depth(cpus_node);
     if (result == memory_node) {
-        printf("utils: skip_until_same_depth /cpus -> /memory " ANSI_COLOR_GREEN "SUCCESS" ANSI_COLOR_RESET "\n");
+        printf("utils: skip_until_same_depth /cpus -> /memory " ANSI_COLOR_GREEN "     SUCCESS" ANSI_COLOR_RESET "\n");
     } else {
-        printf("utils: skip_until_same_depth /cpus -> /memory " ANSI_COLOR_RED "FAILED" ANSI_COLOR_RESET "\n");
+        printf("utils: skip_until_same_depth /cpus -> /memory " ANSI_COLOR_RED "       FAILED" ANSI_COLOR_RESET "\n");
         exit(1);
     }
 }
