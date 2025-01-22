@@ -31,6 +31,52 @@ dtb *dtb_fromptr(void *ptr)
     return devicetree;
 }
 
+static int strcmp_nodename(const char *pathpart, const char *nodename)
+{
+    while (!(*pathpart == '\0' || *nodename == '\0' || *nodename == '@')) {
+        if (*pathpart != *nodename) {
+            break;
+        }
+
+        pathpart++;
+        nodename++;
+    }
+
+    if (*pathpart == '\0' && *nodename == '\0') {
+        return 0;
+    }
+
+    if (*pathpart == '\0' && *nodename == '@') {
+        return 0;
+    }
+
+    return 1;
+}
+
+static uint32_t *skip_until_same_depth(uint32_t *token)
+{
+    int depth = 0;
+    while (*token == DTB_END) {
+        if (*token == DTB_BEGIN_NODE) {
+            token++;
+            depth++;
+        } else if (*token == DTB_PROP) {
+            uint32_t len = DTB_BYTESWAP32(*(token + 1));
+            token += len / sizeof(uint32_t) + 2;
+        } else if (*token == DTB_NOP) {
+            token++;
+        } else if (*token == DTB_END_NODE) {
+            depth--;
+            if (depth <= 0) {
+                return token;
+            }
+        }
+        token++;
+    }
+
+    return token;
+}
+
 dtb_node dtb_find(dtb *devicetree, const char *path)
 {
     uint32_t *struct_block = (uint32_t *)((uint8_t *)devicetree + DTB_BYTESWAP32(devicetree->off_dt_struct));
@@ -45,6 +91,51 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
         return (dtb_node)struct_block;
     }
 
-    // TODO: actually implement the searching of the node
+    // Always needs to be an absolute path.
+    if (path[0] != '/') {
+        printf("Path does not start with /\n");
+        return NULL;
+    }
+
+    char parsed_path[10][256] = {0};
+    size_t parsed_i = 0;
+    size_t path_depth = 0;
+    int i = 1;
+    while (path[i] != '\0') {
+        if (path[i] == '/') {
+            path_depth++;
+            parsed_i = 0;
+        } else {
+            parsed_path[path_depth][parsed_i] = path[i];
+            parsed_i++;
+        }
+
+        i++;
+    }
+
+    uint32_t *token = struct_block;
+    uint32_t parsing_depth = 0;
+    while (*token != DTB_END) {
+        if (*token == DTB_BEGIN_NODE) {
+            token++;
+            if (strcmp_nodename(parsed_path[parsing_depth], (char *)token) == 0) {
+                if (parsing_depth == path_depth) {
+                    return (dtb_node)token - 1;
+                }
+
+                parsing_depth++;
+            } else {
+                token = skip_until_same_depth(token);
+            }
+        } else if (*token == DTB_PROP) {
+            uint32_t len = DTB_BYTESWAP32(*(token + 1));
+            token += len / sizeof(uint32_t) + 2;
+        } else if (*token == DTB_NOP) {
+            token++;
+        }
+
+        token++;
+    }
+
     return NULL;
 }
