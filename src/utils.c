@@ -26,7 +26,7 @@ int strcmp_nodename(const char *pathpart, const char *nodename)
 uint32_t *skip_until_same_depth(uint32_t *token)
 {
     int depth = 0;
-    while (*token == DTB_END) {
+    while (*token != DTB_END) {
         if (*token == DTB_BEGIN_NODE) {
             token++;
             depth++;
@@ -38,9 +38,13 @@ uint32_t *skip_until_same_depth(uint32_t *token)
         } else if (*token == DTB_END_NODE) {
             depth--;
             if (depth <= 0) {
-                return token;
+                break;
             }
         }
+        token++;
+    }
+
+    while (!(*token == DTB_END || *token == DTB_BEGIN_NODE)) {
         token++;
     }
 
