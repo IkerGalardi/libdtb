@@ -59,7 +59,7 @@ int main(int argc, char **argv)
         printf("qemu-virt: dtb_find '/memory' " ANSI_COLOR_RED "FAILED" ANSI_COLOR_RESET "\n");
         exit(1);
     } else {
-        printf("qemu-virt: dtb_find '/memory' " ANSI_COLOR_RED "FAILED" ANSI_COLOR_RESET "\n");
+        printf("qemu-virt: dtb_find '/memory' " ANSI_COLOR_GREEN "SUCCESS" ANSI_COLOR_RESET "\n");
     }
 
     dtb_node serial_node = dtb_find(devicetree, "/soc/serial");
