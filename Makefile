@@ -33,3 +33,6 @@ bin/test_utils: bin/utils-debug.o test/test_utils.c test/test.h
 test: bin/test_utils bin/test_qemu-virt
 	@ bin/test_utils
 	@ bin/test_qemu-virt dtbfiles/qemu-virt.dtb
+
+clean:
+	rm -f bin/*.o bin/test_utils bin/test_qemu-virt
