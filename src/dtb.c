@@ -62,7 +62,7 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
         i++;
     }
 
-    uint32_t *token = struct_block;
+    uint32_t *token = struct_block + 1;
     uint32_t parsing_depth = 0;
     while (*token != DTB_END) {
         if (*token == DTB_BEGIN_NODE) {
