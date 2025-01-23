@@ -47,4 +47,7 @@ int main(int argc, char **argv)
     uint32_t *cpu1_node = &tokenlist[11];
     result = skip_until_same_depth(cpu0_node);
     print_test_result("utils: skip_until_same_depth /cpus/cpu0 -> /cpus/cpu1", result == cpu1_node);
+
+    result = skip_until_same_depth(cpu1_node);
+    print_test_result("utils: skip_until_same_depth /cpus/cpu1 -> NULL", result == NULL);
 }
