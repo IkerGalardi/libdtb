@@ -9,16 +9,16 @@ libdtb.a: bin/dtb.o bin/utils.o
 libdtb-debug.a: bin/dtb-debug.o bin/utils-debug.o
 	ar rcs libdtb-debug.a bin/dtb-debug.o
 
-bin/dtb.o: include/dtb/dtb.h src/dtb.c src/utils.h
+bin/dtb.o: include/dtb/dtb.h src/dtb.c src/utils.h src/debug.h
 	$(CC) -c src/dtb.c -o bin/dtb.o -O2 $(CFLAGS)
 
-bin/utils.o: src/utils.h src/utils.c
+bin/utils.o: src/utils.h src/utils.c src/debug.h
 	$(CC) -c src/utils.c -o bin/utils.o -O2 $(CFLAGS)
 
-bin/dtb-debug.o: include/dtb/dtb.h src/dtb.c src/utils.h
+bin/dtb-debug.o: include/dtb/dtb.h src/dtb.c src/utils.h src/debug.h
 	$(CC) -c src/dtb.c -o bin/dtb-debug.o -ggdb $(CFLAGS)
 
-bin/utils-debug.o: src/utils.h src/utils.c
+bin/utils-debug.o: src/utils.h src/utils.c src/debug.h
 	$(CC) -c src/utils.c -o bin/utils-debug.o -ggdb $(CFLAGS)
 
 
