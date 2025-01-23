@@ -1,13 +1,7 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <assert.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
 #include <string.h>
 #include "dtb/dtb.h"
 #include "utils.h"
+#include "debug.h"
 
 #define DTB_MAGIC_LE DTB_BYTESWAP32(0xd00dfeed)
 
@@ -48,7 +42,7 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
 
     // Always needs to be an absolute path.
     if (path[0] != '/') {
-        printf("Path does not start with /\n");
+        DEBUG_PRINT("Path does not start with /\n");
         return NULL;
     }
 
@@ -73,6 +67,7 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
     while (*token != DTB_END) {
         if (*token == DTB_BEGIN_NODE) {
             token++;
+            DEBUG_PRINT("BEGIN NODE %s\n", (char *)token);
             if (strcmp_nodename(parsed_path[parsing_depth], (char *)token) == 0) {
                 if (parsing_depth == path_depth) {
                     return (dtb_node)token - 1;
@@ -85,8 +80,9 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
         } else if (*token == DTB_PROP) {
             uint32_t len = DTB_BYTESWAP32(*(token + 1));
             token += len / sizeof(uint32_t) + 2;
+            DEBUG_PRINT("PROP %" PRIu32 "\n", len);
         } else if (*token == DTB_NOP) {
-            token++;
+            DEBUG_PRINT("NOP\n");
         }
 
         token++;
