@@ -50,8 +50,12 @@ uint32_t *skip_until_same_depth(uint32_t *token)
         token++;
     }
 
-    while (!(*token == DTB_END || *token == DTB_BEGIN_NODE)) {
+    while (*token == DTB_NOP) {
         token++;
+
+        if (*token == DTB_END) {
+            break;
+        }
     }
 
     return token;
