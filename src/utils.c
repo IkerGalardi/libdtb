@@ -38,8 +38,7 @@ uint32_t *skip_until_same_depth(uint32_t *token)
             token += len / sizeof(uint32_t) + 2;
             DEBUG_PRINT("  PROP %" PRIu32 "\n", len);
         } else if (*token == DTB_NOP) {
-            token++;
-            DEBUG_PRINT("  NOP");
+            DEBUG_PRINT("  NOP\n");
         } else if (*token == DTB_END_NODE) {
             depth--;
             DEBUG_PRINT("  END NODE, new depth = %d\n", depth);
