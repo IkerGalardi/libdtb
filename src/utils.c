@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "debug.h"
 #include "dtb/dtb.h"
 
 int strcmp_nodename(const char *pathpart, const char *nodename)
@@ -25,18 +26,23 @@ int strcmp_nodename(const char *pathpart, const char *nodename)
 
 uint32_t *skip_until_same_depth(uint32_t *token)
 {
+    DEBUG_PRINT("SKIPPING %s\n", (char *)(token));
     int depth = 0;
     while (*token != DTB_END) {
         if (*token == DTB_BEGIN_NODE) {
             token++;
             depth++;
+            DEBUG_PRINT("  BEGIN_NODE %s, new depth = %d\n", (char *)token, depth);
         } else if (*token == DTB_PROP) {
             uint32_t len = DTB_BYTESWAP32(*(token + 1));
             token += len / sizeof(uint32_t) + 2;
+            DEBUG_PRINT("  PROP %" PRIu32 "\n", len);
         } else if (*token == DTB_NOP) {
             token++;
+            DEBUG_PRINT("  NOP");
         } else if (*token == DTB_END_NODE) {
             depth--;
+            DEBUG_PRINT("  END NODE, new depth = %d\n", depth);
             if (depth <= 0) {
                 break;
             }

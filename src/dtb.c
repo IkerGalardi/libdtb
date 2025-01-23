@@ -67,7 +67,7 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
     while (*token != DTB_END) {
         if (*token == DTB_BEGIN_NODE) {
             token++;
-            DEBUG_PRINT("BEGIN NODE %s\n", (char *)token);
+            DEBUG_PRINT("BEGIN NODE %s, comparing with %s\n", (char *)token, parsed_path[parsing_depth]);
             if (strcmp_nodename(parsed_path[parsing_depth], (char *)token) == 0) {
                 if (parsing_depth == path_depth) {
                     return (dtb_node)token - 1;
@@ -83,6 +83,8 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
             DEBUG_PRINT("PROP %" PRIu32 "\n", len);
         } else if (*token == DTB_NOP) {
             DEBUG_PRINT("NOP\n");
+        } else if (*token == DTB_END_NODE) {
+            DEBUG_PRINT("DTB_END_NODE\n");
         }
 
         token++;
