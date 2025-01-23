@@ -79,6 +79,7 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
                 if (token == NULL) {
                     return NULL;
                 }
+                token--;
             }
         } else if (*token == DTB_PROP) {
             uint32_t len = DTB_BYTESWAP32(*(token + 1));
