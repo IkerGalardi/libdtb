@@ -1,4 +1,5 @@
 #include "utils.h"
+#include <stddef.h>
 #include "debug.h"
 #include "dtb/dtb.h"
 
