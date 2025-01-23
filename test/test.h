@@ -20,6 +20,8 @@
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
+#define MAX_LINE_WIDTH 70
+
 void *map_device_tree(const char *path)
 {
     int fd = open(path, O_RDONLY);
@@ -32,6 +34,51 @@ void *map_device_tree(const char *path)
     assert(ptr != MAP_FAILED);
 
     return ptr;
+}
+
+void print_test_result(const char *name, bool succeded)
+{
+    char buff[MAX_LINE_WIDTH +  5] = {0};
+    memset(buff, ' ', MAX_LINE_WIDTH-2);
+    int i = 0;
+    while (name[i] != '\0') {
+        buff[i] = name[i];
+        i++;
+    }
+
+    #define ANSI_COLOR_RED     "\x1b[31m"
+    if (succeded == true) {
+        buff[MAX_LINE_WIDTH - 2]  = 'S';
+        buff[MAX_LINE_WIDTH - 3]  = 'S';
+        buff[MAX_LINE_WIDTH - 4]  = 'E';
+        buff[MAX_LINE_WIDTH - 5]  = 'C';
+        buff[MAX_LINE_WIDTH - 6]  = 'C';
+        buff[MAX_LINE_WIDTH - 7]  = 'U';
+        buff[MAX_LINE_WIDTH - 8]  = 'S';
+        buff[MAX_LINE_WIDTH - 9]  = 'm';
+        buff[MAX_LINE_WIDTH - 10] = '2';
+        buff[MAX_LINE_WIDTH - 11] = '3';
+        buff[MAX_LINE_WIDTH - 12] = '[';
+        buff[MAX_LINE_WIDTH - 13] = '\x1b';
+    } else {
+        buff[MAX_LINE_WIDTH - 2] = 'D';
+        buff[MAX_LINE_WIDTH - 3] = 'E';
+        buff[MAX_LINE_WIDTH - 4] = 'L';
+        buff[MAX_LINE_WIDTH - 5] = 'I';
+        buff[MAX_LINE_WIDTH - 6] = 'A';
+        buff[MAX_LINE_WIDTH - 7] = 'F';
+        buff[MAX_LINE_WIDTH - 9]  = 'm';
+        buff[MAX_LINE_WIDTH - 10] = '1';
+        buff[MAX_LINE_WIDTH - 11] = '3';
+        buff[MAX_LINE_WIDTH - 12] = '[';
+        buff[MAX_LINE_WIDTH - 13] = '\x1b';
+    }
+
+    printf("%s" "\x1b[0m\n", buff);
+
+    if (succeded == false) {
+        abort();
+    }
 }
 
 #endif // _TEST_H

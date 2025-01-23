@@ -6,22 +6,15 @@ int main(int argc, char **argv)
     (void)argc;
     (void)argv;
 
-    if (strcmp_nodename("memory", "memory@800000") == 0) {
-        printf("utils: strcmp_nodename 'memory' == 'memory@800000' " ANSI_COLOR_GREEN "        SUCCESS" ANSI_COLOR_RESET "\n");
-    } else {
-        printf("utils: strcmp_nodename 'memory' == 'memory@800000' " ANSI_COLOR_RED   "        FAILED" ANSI_COLOR_RESET "\n");
-    }
+    {
+        int result = strcmp_nodename("memory", "memory@800000");
+        print_test_result("utils: strcmp_nodename 'memory' == 'memory@800000'",  result == 0);
 
-    if (strcmp_nodename("soc", "soc") == 0) {
-        printf("utils: strcmp_nodename 'soc' == 'soc' " ANSI_COLOR_GREEN "                     SUCCESS" ANSI_COLOR_RESET "\n");
-    } else {
-        printf("utils: strcmp_nodename 'soc' == 'soc' " ANSI_COLOR_RED   "                     FAILED" ANSI_COLOR_RESET "\n");
-    }
+        result = strcmp_nodename("soc", "soc");
+        print_test_result("utils: strcmp_nodename 'soc' == 'soc'", result == 0);
 
-    if (strcmp_nodename("memory", "soc") != 0) {
-        printf("utils: strcmp_nodename 'memory' != 'soc' " ANSI_COLOR_GREEN "                  SUCCESS" ANSI_COLOR_RESET "\n");
-    } else {
-        printf("utils: strcmp_nodename 'memory' != 'soc' " ANSI_COLOR_RED   "                  FAILED" ANSI_COLOR_RESET "\n");
+        result = strcmp_nodename("memory", "soc");
+        print_test_result("utils: strcmp_nodename 'memory' != 'soc'", result != 0);
     }
 
     uint32_t tokenlist[] = {
@@ -48,20 +41,10 @@ int main(int argc, char **argv)
     uint32_t *cpus_node = &tokenlist[4];
     uint32_t *memory_node = &tokenlist[17];
     uint32_t *result = skip_until_same_depth(cpus_node);
-    if (result == memory_node) {
-        printf("utils: skip_until_same_depth /cpus -> /memory " ANSI_COLOR_GREEN "             SUCCESS" ANSI_COLOR_RESET "\n");
-    } else {
-        printf("utils: skip_until_same_depth /cpus -> /memory " ANSI_COLOR_RED "               FAILED" ANSI_COLOR_RESET "\n");
-        exit(1);
-    }
+    print_test_result("utils: skip_until_same_depth /cpus -> /memory", result == memory_node);
 
     uint32_t *cpu0_node = &tokenlist[6];
     uint32_t *cpu1_node = &tokenlist[11];
     result = skip_until_same_depth(cpu0_node);
-    if (result == cpu1_node) {
-        printf("utils: skip_until_same_depth /cpus/cpu0 -> /cpus/cpu1 " ANSI_COLOR_GREEN "     SUCCESS" ANSI_COLOR_RESET "\n");
-    } else {
-        printf("utils: skip_until_same_depth /cpus/cpu0 -> /cpus/cpu1 " ANSI_COLOR_RED   "     FAILED" ANSI_COLOR_RESET "\n");
-        exit(1);
-    }
+    print_test_result("utils: skip_until_same_depth /cpus/cpu0 -> /cpus/cpu1", result == cpu1_node);
 }
