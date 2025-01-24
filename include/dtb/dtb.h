@@ -55,6 +55,8 @@ dtb_node dtb_find(dtb *devicetree, const char *path);
 
 dtb_node dtb_next_sibling(dtb_node node);
 
+#define dtb_node_name(node) (char *)((uint32_t *)node+1)
+
 #define dtb_property_name(node) (char *)((uint32_t *)node+1)
 
 #define dtb_foreach_property(dtb, node, x) { \
