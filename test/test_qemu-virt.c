@@ -41,8 +41,10 @@ int main(int argc, char **argv)
     print_test_result("qemu-virt: dtb_foreach_property '/'", ok);
 
     dtb_node memory_node = dtb_find(devicetree, "/memory");
-    print_test_result("qemu-virt: dtb_find '/memory'", memory_node != NULL);
+    ok = memory_node != NULL && strcmp(dtb_node_name(memory_node), "memory@80000000") == 0;
+    print_test_result("qemu-virt: dtb_find '/memory'", ok);
 
     dtb_node serial_node = dtb_find(devicetree, "/soc/serial");
-    print_test_result("qemu-virt: dtb_find '/soc/serial'", serial_node != NULL);
+    ok = memory_node != NULL && strcmp(dtb_node_name(serial_node), "serial@10000000") == 0;
+    print_test_result("qemu-virt: dtb_find '/soc/serial'", ok);
 }
