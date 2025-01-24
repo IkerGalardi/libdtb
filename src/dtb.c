@@ -75,7 +75,7 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
 
                 parsing_depth++;
             } else {
-                token = skip_until_same_depth(token - 1);
+                token = dtb_next_sibling(token - 1);
                 if (token == NULL) {
                     return NULL;
                 }
@@ -95,4 +95,44 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
     }
 
     return NULL;
+}
+
+dtb_node dtb_next_sibling(dtb_node node)
+{
+    int depth = 0;
+    while (*node != DTB_END) {
+        if (*node == DTB_BEGIN_NODE) {
+            node++;
+            depth++;
+            DEBUG_PRINT("  BEGIN_NODE %s, new depth = %d\n", (char *)node, depth);
+        } else if (*node == DTB_PROP) {
+            uint32_t len = DTB_BYTESWAP32(*(node + 1));
+            node += len / sizeof(uint32_t) + 2;
+            DEBUG_PRINT("  PROP %" PRIu32 "\n", len);
+        } else if (*node == DTB_NOP) {
+            DEBUG_PRINT("  NOP\n");
+        } else if (*node == DTB_END_NODE) {
+            depth--;
+            DEBUG_PRINT("  END NODE, new depth = %d\n", depth);
+            if (depth <= 0) {
+                node++;
+                break;
+            }
+        }
+        node++;
+    }
+
+    while (*node != DTB_BEGIN_NODE) {
+        if (*node == DTB_END) {
+            break;
+        }
+
+        if (*node == DTB_END_NODE) {
+            return NULL;
+        }
+
+        node++;
+    }
+
+    return node;
 }
