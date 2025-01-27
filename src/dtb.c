@@ -107,7 +107,12 @@ dtb_node dtb_next_sibling(dtb_node node)
             DEBUG_PRINT("  BEGIN_NODE %s, new depth = %d\n", (char *)node, depth);
         } else if (*node == DTB_PROP) {
             uint32_t len = DTB_BYTESWAP32(*(node + 1));
-            node += len / sizeof(uint32_t) + 2;
+            int len_rounding = 4 - len % 4;
+            if (len % 4 == 0) {
+                node += len / sizeof(uint32_t) + 2;
+            } else {
+                node += (len + len_rounding) / sizeof(uint32_t) + 2;
+            }
             DEBUG_PRINT("  PROP %" PRIu32 "\n", len);
         } else if (*node == DTB_NOP) {
             DEBUG_PRINT("  NOP\n");
