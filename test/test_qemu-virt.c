@@ -40,4 +40,12 @@ int main(int argc, char **argv)
     dtb_node serial_node = dtb_find(devicetree, "/soc/serial");
     ok = memory_node != NULL && strcmp(dtb_node_name(serial_node), "serial@10000000") == 0;
     print_test_result("qemu-virt: dtb_find '/soc/serial'", ok);
+
+    dtb_node cpus_node = dtb_next_sibling(memory_node);
+    char *cpus_node_str = dtb_node_name(cpus_node);
+    print_test_result("qemu-virt: dtb_next_sibling '/memory' -> '/cpus'", strcmp(cpus_node_str, "cpus") == 0);
+
+    dtb_node test_node = dtb_next_sibling(serial_node);
+    char *test_node_str = dtb_node_name(test_node);
+    print_test_result("qemu-virt: dtb_next_sibling '/soc/serial' -> '/soc/test'", strcmp(test_node_str, "test@100000") == 0);
 }
