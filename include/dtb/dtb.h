@@ -55,6 +55,7 @@ dtb_node dtb_find(dtb *devicetree, const char *path);
 
 #define dtb_property_name(node) (char *)((uint32_t *)node+1)
 
+// NOTE: assumes that address-cells and size-cells props come before any other prop
 #define dtb_foreach_property(dtb, node, x) { \
     char *__strings = (char *)dtb + DTB_BYTESWAP32(dtb->off_dt_strings); \
     uint32_t *__prop = node + 1; \
@@ -62,11 +63,19 @@ dtb_node dtb_find(dtb *devicetree, const char *path);
         if (*__prop == DTB_NOP) { \
             __prop++;\
         } else if (*__prop == DTB_PROP) {\
+            uint32_t __attribute__((unused)) address_cells = 2; \
+            uint32_t __attribute__((unused)) size_cells = 1; \
             uint32_t proplen = DTB_BYTESWAP32(*(__prop + 1));\
             uint32_t __stroff = DTB_BYTESWAP32(*(__prop + 2));\
             char *propname = __strings + __stroff; \
             uint32_t __attribute__((unused)) *prop = __prop + 3; \
-            x \
+            if (strcmp(propname, "#address-cells") == 0) { \
+                address_cells = *prop; \
+            } else if (strcmp(propname, "#size-cells") == 0) { \
+                size_cells = *__prop + 3; \
+            } else { \
+                x \
+            } \
             __prop += proplen / sizeof(uint32_t) + 2; \
         } else if (*__prop == DTB_END || *__prop == DTB_BEGIN_NODE || *__prop == DTB_END_NODE) { \
             break;\
