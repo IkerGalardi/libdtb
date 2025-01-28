@@ -39,6 +39,7 @@ uint32_t *next_token(uint32_t *token)
 
         tokenchar += (uint64_t)tokenchar % 4;
         token = (uint32_t *)tokenchar;
+        token++;
 
         assert(*token != FDT_END);
     } else if (*token == DTB_END_NODE) {
