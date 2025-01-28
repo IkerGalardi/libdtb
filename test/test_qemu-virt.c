@@ -23,13 +23,14 @@ int main(int argc, char **argv)
 
     bool found_compatible = false;
     bool found_model = false;
-    dtb_foreach_property(devicetree, root_node, {
+    for (dtb_property prop = dtb_first_property(root_node); prop != NULL; prop = dtb_next_property(prop)) {
+        char *propname = dtb_property_name(devicetree, prop);
         if (strcmp(propname, "compatible") == 0) {
             found_compatible = true;
         } else if (strcmp(propname, "model") == 0) {
             found_model = true;
         }
-    });
+    }
     bool ok = found_compatible == true && found_model == true;
     print_test_result("qemu-virt: dtb_foreach_property '/'", ok);
 
