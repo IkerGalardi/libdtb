@@ -30,6 +30,7 @@ uint32_t *next_token(uint32_t *token)
     assert((uint64_t)token % 4 == 0);
 
     if (*token == DTB_BEGIN_NODE) {
+        DEBUG_PRINT("%p: DTB_BEGIN_NODE %s\n", (void *)token, (char *)(token + 1));
         token++;
 
         char *tokenchar = (char *)token;
@@ -41,13 +42,15 @@ uint32_t *next_token(uint32_t *token)
         token = (uint32_t *)tokenchar;
         token++;
 
-        assert(*token != FDT_END);
+        assert(*token != DTB_END);
     } else if (*token == DTB_END_NODE) {
+        DEBUG_PRINT("%p: DTB_END_NODE\n", (void *)token);
         token++;
 
         assert(*token != DTB_PROP);
     } else if (*token == DTB_PROP) {
         uint32_t len = DTB_BYTESWAP32(*(token + 1));
+        DEBUG_PRINT("%p: PROP %" PRIu32 "\n", (void *)token, len);
         if (len % sizeof(uint32_t) == 0) {
             token += len / sizeof(uint32_t) + 3;
         } else {
@@ -57,6 +60,7 @@ uint32_t *next_token(uint32_t *token)
 
         assert(*token != DTB_END);
     } else if (*token == DTB_NOP) {
+        DEBUG_PRINT("%p: DTB_NOP %s\n", (void *)token, (char *)(token + 1));
         token++;
     } else {
         assert(false);
