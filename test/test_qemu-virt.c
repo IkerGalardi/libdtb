@@ -10,9 +10,9 @@ int main(int argc, char **argv)
     print_test_result("qemu-virt: dtb_fromptr", devicetree != NULL);
 
     bool has_rsvmap_entries = false;
-    dtb_foreach_rsvmap_entry(devicetree, {
+    dtb_foreach_rsvmap_entry(devicetree, entry) {
         has_rsvmap_entries = true;
-    });
+    }
     print_test_result("qemu-virt: dtb_foreach_rsvmap_entry", has_rsvmap_entries == false);
 
     dtb_node null_node = dtb_find(devicetree, "/not/exist");
