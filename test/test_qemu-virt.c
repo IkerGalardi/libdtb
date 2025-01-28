@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 
     bool found_compatible = false;
     bool found_model = false;
-    for (dtb_property prop = dtb_first_property(root_node); prop != NULL; prop = dtb_next_property(prop)) {
+    dtb_foreach_property(root_node, prop) {
         char *propname = dtb_property_name(devicetree, prop);
         if (strcmp(propname, "compatible") == 0) {
             found_compatible = true;

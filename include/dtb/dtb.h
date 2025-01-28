@@ -56,6 +56,8 @@ dtb_node dtb_find(dtb *devicetree, const char *path);
 
 char *dtb_property_name(dtb *devicetree, dtb_node node);
 
+#define dtb_foreach_property(node, name) for (dtb_property name = dtb_first_property(node); name != NULL; name = dtb_next_property(name))
+
 dtb_property dtb_first_property(dtb_property prop);
 
 dtb_property dtb_next_property(dtb_property prop);
