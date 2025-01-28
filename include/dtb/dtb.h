@@ -41,6 +41,7 @@ typedef struct __attribute__((packed))
 } dtb_rsvmap_entry;
 
 typedef uint32_t* dtb_node;
+typedef uint32_t* dtb_property;
 
 /**
  * @brief Create a device tree object from a pointer.
@@ -52,6 +53,12 @@ dtb *dtb_fromptr(void *ptr);
 dtb_node dtb_find(dtb *devicetree, const char *path);
 
 #define dtb_node_name(node) (char *)((uint32_t *)node+1)
+
+char *dtb_property_name(dtb *devicetree, dtb_node node);
+
+dtb_property dtb_first_property(dtb_property prop);
+
+dtb_property dtb_next_property(dtb_property prop);
 
 dtb_node dtb_next_sibling(dtb_node node);
 
