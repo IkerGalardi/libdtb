@@ -64,14 +64,10 @@ dtb_property dtb_next_property(dtb_property prop);
 
 dtb_node dtb_next_sibling(dtb_node node);
 
-#define dtb_foreach_rsvmap_entry(dtb, x) {                                      \
-        uint8_t *__dtb_ptr = (uint8_t *)dtb;                                    \
-        uint8_t *__entry_ptr = __dtb_ptr + DTB_BYTESWAP32(dtb->off_mem_rsvmap); \
-        dtb_rsvmap_entry *entry = (dtb_rsvmap_entry *)__entry_ptr;              \
-        while (!(entry->address == 0 && entry->size == 0)) {                    \
-            x                                                                   \
-        }                                                                       \
-    }
+dtb_rsvmap_entry *dtb_first_rsvmap_entry(dtb *devicetree);
 
+dtb_rsvmap_entry *dtb_next_rsvmap_entry(dtb_rsvmap_entry *entry);
+
+#define dtb_foreach_rsvmap_entry(dtb, entry) for (dtb_rsvmap_entry *entry = dtb_first_rsvmap_entry(dtb); entry != NULL; entry = dtb_next_rsvmap_entry(entry))
 
 #endif // _DTB_H

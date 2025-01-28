@@ -176,3 +176,26 @@ dtb_node dtb_next_sibling(dtb_node node)
 
     return node;
 }
+
+dtb_rsvmap_entry *dtb_first_rsvmap_entry(dtb *devicetree)
+{
+    uint8_t *dtb_ptr = (uint8_t *)devicetree;
+    dtb_rsvmap_entry *entry = (dtb_rsvmap_entry *)(dtb_ptr + DTB_BYTESWAP32(devicetree->off_mem_rsvmap));
+
+    if (entry->address == 0 && entry->size == 0) {
+        return NULL;
+    }
+
+    return entry;
+}
+
+dtb_rsvmap_entry *dtb_next_rsvmap_entry(dtb_rsvmap_entry *entry)
+{
+    entry++;
+
+    if (entry->address == 0 && entry->size == 0) {
+        return NULL;
+    }
+
+    return entry;
+}
