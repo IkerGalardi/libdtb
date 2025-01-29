@@ -23,15 +23,21 @@ int main(int argc, char **argv)
 
     bool found_compatible = false;
     bool found_model = false;
+    bool found_addr_cells = false;
+    bool found_size_cells = false;
     dtb_foreach_property(root_node, prop) {
         char *propname = dtb_property_name(devicetree, prop);
         if (strcmp(propname, "compatible") == 0) {
             found_compatible = true;
         } else if (strcmp(propname, "model") == 0) {
             found_model = true;
+        } else if (strcmp(propname, "#address-cells") == 0) {
+            found_addr_cells = true;
+        } else if (strcmp(propname, "#size-cells") == 0) {
+            found_size_cells = true;
         }
     }
-    bool ok = found_compatible == true && found_model == true;
+    bool ok = found_compatible && found_model && found_addr_cells && found_size_cells;
     print_test_result("qemu-virt: dtb_foreach_property '/'", ok);
 
     bool found_pmu = false;
@@ -87,4 +93,5 @@ int main(int argc, char **argv)
     dtb_node test_node = dtb_next_sibling(serial_node);
     char *test_node_str = dtb_node_name(test_node);
     print_test_result("qemu-virt: dtb_next_sibling '/soc/serial' -> '/soc/test'", strcmp(test_node_str, "test@100000") == 0);
+
 }
