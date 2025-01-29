@@ -132,6 +132,23 @@ dtb_property dtb_next_property(dtb_property prop)
     return token;
 }
 
+dtb_node dtb_first_child(dtb_node node)
+{
+    assert(*node == DTB_BEGIN_NODE);
+
+    uint32_t *token = next_token(node);
+    while (*token != DTB_BEGIN_NODE) {
+        if (*token == DTB_END || *token == DTB_END_NODE) {
+            return NULL;
+        }
+
+        token = next_token(token);
+    }
+
+    assert(*token == DTB_BEGIN_NODE);
+    return token;
+}
+
 dtb_node dtb_next_sibling(dtb_node node)
 {
     int depth = 0;

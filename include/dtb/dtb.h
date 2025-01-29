@@ -62,7 +62,11 @@ dtb_property dtb_first_property(dtb_property prop);
 
 dtb_property dtb_next_property(dtb_property prop);
 
+dtb_node dtb_first_child(dtb_node node);
+
 dtb_node dtb_next_sibling(dtb_node node);
+
+#define dtb_foreach_child(node, name) for (dtb_node name = dtb_first_child(node); name != NULL; name = dtb_next_sibling(name))
 
 dtb_rsvmap_entry *dtb_first_rsvmap_entry(dtb *devicetree);
 
