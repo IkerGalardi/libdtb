@@ -41,6 +41,7 @@ typedef struct __attribute__((packed))
 } dtb_rsvmap_entry;
 
 typedef uint32_t* dtb_node;
+typedef uint32_t* dtb_property;
 
 /**
  * @brief Create a device tree object from a pointer.
@@ -53,45 +54,24 @@ dtb_node dtb_find(dtb *devicetree, const char *path);
 
 #define dtb_node_name(node) (char *)((uint32_t *)node+1)
 
+char *dtb_property_name(dtb *devicetree, dtb_node node);
+
+#define dtb_foreach_property(node, name) for (dtb_property name = dtb_first_property(node); name != NULL; name = dtb_next_property(name))
+
+dtb_property dtb_first_property(dtb_property prop);
+
+dtb_property dtb_next_property(dtb_property prop);
+
+dtb_node dtb_first_child(dtb_node node);
+
 dtb_node dtb_next_sibling(dtb_node node);
 
-// NOTE: assumes that address-cells and size-cells props come before any other prop
-#define dtb_foreach_property(dtb, node, x) { \
-    char *__strings = (char *)dtb + DTB_BYTESWAP32(dtb->off_dt_strings); \
-    uint32_t *__prop = node + 1; \
-    while (1) { \
-        if (*__prop == DTB_NOP) { \
-            __prop++;\
-        } else if (*__prop == DTB_PROP) {\
-            uint32_t __attribute__((unused)) address_cells = 2; \
-            uint32_t __attribute__((unused)) size_cells = 1; \
-            uint32_t proplen = DTB_BYTESWAP32(*(__prop + 1));\
-            uint32_t __stroff = DTB_BYTESWAP32(*(__prop + 2));\
-            char *propname = __strings + __stroff; \
-            uint32_t __attribute__((unused)) *prop = __prop + 3; \
-            if (strcmp(propname, "#address-cells") == 0) { \
-                address_cells = *prop; \
-            } else if (strcmp(propname, "#size-cells") == 0) { \
-                size_cells = *__prop + 3; \
-            } else { \
-                x \
-            } \
-            __prop += proplen / sizeof(uint32_t) + 2; \
-        } else if (*__prop == DTB_END || *__prop == DTB_BEGIN_NODE || *__prop == DTB_END_NODE) { \
-            break;\
-        }\
-        __prop++; \
-    } \
-}
+#define dtb_foreach_child(node, name) for (dtb_node name = dtb_first_child(node); name != NULL; name = dtb_next_sibling(name))
 
-#define dtb_foreach_rsvmap_entry(dtb, x) {                                      \
-        uint8_t *__dtb_ptr = (uint8_t *)dtb;                                    \
-        uint8_t *__entry_ptr = __dtb_ptr + DTB_BYTESWAP32(dtb->off_mem_rsvmap); \
-        dtb_rsvmap_entry *entry = (dtb_rsvmap_entry *)__entry_ptr;              \
-        while (!(entry->address == 0 && entry->size == 0)) {                    \
-            x                                                                   \
-        }                                                                       \
-    }
+dtb_rsvmap_entry *dtb_first_rsvmap_entry(dtb *devicetree);
 
+dtb_rsvmap_entry *dtb_next_rsvmap_entry(dtb_rsvmap_entry *entry);
+
+#define dtb_foreach_rsvmap_entry(dtb, entry) for (dtb_rsvmap_entry *entry = dtb_first_rsvmap_entry(dtb); entry != NULL; entry = dtb_next_rsvmap_entry(entry))
 
 #endif // _DTB_H

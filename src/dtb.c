@@ -97,6 +97,58 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
     return NULL;
 }
 
+char *dtb_property_name(dtb *devicetree, dtb_node node)
+{
+    char *strings = (char *)devicetree + DTB_BYTESWAP32(devicetree->off_dt_strings);
+    uint32_t stroff = DTB_BYTESWAP32(*(node + 2));
+    return strings + stroff;
+}
+
+dtb_property dtb_first_property(dtb_node node)
+{
+    uint32_t *token = next_token(node);
+    while (*token != DTB_PROP) {
+        if (*token == DTB_END || *token == DTB_BEGIN_NODE || *token == DTB_END_NODE) {
+            return NULL;
+        }
+
+        token = next_token(token);
+    }
+
+    return token;
+}
+
+dtb_property dtb_next_property(dtb_property prop)
+{
+    uint32_t *token = next_token(prop);
+    while (*token != DTB_PROP) {
+        if (*token == DTB_END || *token == DTB_BEGIN_NODE || *token == DTB_END_NODE) {
+            return NULL;
+        }
+
+        token = next_token(token);
+    }
+
+    return token;
+}
+
+dtb_node dtb_first_child(dtb_node node)
+{
+    assert(*node == DTB_BEGIN_NODE);
+
+    uint32_t *token = next_token(node);
+    while (*token != DTB_BEGIN_NODE) {
+        if (*token == DTB_END || *token == DTB_END_NODE) {
+            return NULL;
+        }
+
+        token = next_token(token);
+    }
+
+    assert(*token == DTB_BEGIN_NODE);
+    return token;
+}
+
 dtb_node dtb_next_sibling(dtb_node node)
 {
     int depth = 0;
@@ -140,4 +192,27 @@ dtb_node dtb_next_sibling(dtb_node node)
     }
 
     return node;
+}
+
+dtb_rsvmap_entry *dtb_first_rsvmap_entry(dtb *devicetree)
+{
+    uint8_t *dtb_ptr = (uint8_t *)devicetree;
+    dtb_rsvmap_entry *entry = (dtb_rsvmap_entry *)(dtb_ptr + DTB_BYTESWAP32(devicetree->off_mem_rsvmap));
+
+    if (entry->address == 0 && entry->size == 0) {
+        return NULL;
+    }
+
+    return entry;
+}
+
+dtb_rsvmap_entry *dtb_next_rsvmap_entry(dtb_rsvmap_entry *entry)
+{
+    entry++;
+
+    if (entry->address == 0 && entry->size == 0) {
+        return NULL;
+    }
+
+    return entry;
 }
