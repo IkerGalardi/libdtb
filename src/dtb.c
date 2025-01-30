@@ -104,6 +104,26 @@ char *dtb_property_name(dtb *devicetree, dtb_node node)
     return strings + stroff;
 }
 
+uint32_t dtb_property_uint32(dtb_property prop)
+{
+    return DTB_BYTESWAP32(*(prop + 3));
+}
+
+uint64_t dtb_property_uint64(dtb_property prop)
+{
+    return DTB_BYTESWAP64(*(uint64_t *)(prop + 3));
+}
+
+char *dtb_property_string(dtb_property prop)
+{
+    return (char *)(prop + 3);
+}
+
+char *dtb_property_array(dtb_property prop)
+{
+    return (void *)(prop + 3);
+}
+
 dtb_property dtb_first_property(dtb_node node)
 {
     uint32_t *token = next_token(node);
