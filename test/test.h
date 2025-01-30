@@ -20,7 +20,7 @@
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
-#define MAX_LINE_WIDTH 70
+#define MAX_LINE_WIDTH 80
 
 void *map_device_tree(const char *path)
 {

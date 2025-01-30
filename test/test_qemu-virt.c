@@ -1,4 +1,5 @@
 #include "test.h"
+#include <inttypes.h>
 #include <string.h>
 
 int main(int argc, char **argv)
@@ -23,22 +24,31 @@ int main(int argc, char **argv)
 
     bool found_compatible = false;
     bool found_model = false;
+    bool model_ok = false;
     bool found_addr_cells = false;
+    bool addr_cells_ok = false;
     bool found_size_cells = false;
+    bool size_cells_ok = false;
     dtb_foreach_property(root_node, prop) {
         char *propname = dtb_property_name(devicetree, prop);
         if (strcmp(propname, "compatible") == 0) {
             found_compatible = true;
         } else if (strcmp(propname, "model") == 0) {
+            char *model_str = dtb_property_string(prop);
+            model_ok = strcmp(model_str, "riscv-virtio,qemu") == 0;
             found_model = true;
         } else if (strcmp(propname, "#address-cells") == 0) {
+            addr_cells_ok = dtb_property_uint32(prop) == 0x2;
             found_addr_cells = true;
         } else if (strcmp(propname, "#size-cells") == 0) {
+            size_cells_ok = dtb_property_uint32(prop) == 0x2;
             found_size_cells = true;
         }
     }
     bool ok = found_compatible && found_model && found_addr_cells && found_size_cells;
     print_test_result("qemu-virt: dtb_foreach_property '/'", ok);
+    print_test_result("qemu-virt: dtb_property_uint32 '/soc:#address-cells' == 2", addr_cells_ok && size_cells_ok);
+    print_test_result("qemu-virt: dtb_property_str '/soc:model' == 'riscv-virtio,qemu'", model_ok);
 
     bool found_pmu = false;
     bool found_fw_cfg = false;
