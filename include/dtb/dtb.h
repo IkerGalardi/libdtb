@@ -6,7 +6,7 @@
 #define DTB_BYTESWAP32(num) ((((num)>>24)&0xff) | (((num)<<8)&0xff0000) | \
                         (((num)>>8)&0xff00) | (((num)<<24)&0xff000000))
 
-#define DTB_BYTESWAP64(num) (BYTESWAP32(num) << 32 | BYTESWAP32((num) >> 32))
+#define DTB_BYTESWAP64(num) (DTB_BYTESWAP32(num) << 32 | DTB_BYTESWAP32((num) >> 32))
 
 #define DTB_CONCAT_HELPER(a, b) a ## b
 #define DTB_CONCAT(a, b) DTB_CONCAT_HELPER(a, b)
