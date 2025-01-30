@@ -45,10 +45,9 @@ int main(int argc, char **argv)
             found_size_cells = true;
         }
     }
-    bool ok = found_compatible && found_model && found_addr_cells && found_size_cells
-            && addr_cells_ok && size_cells_ok;
+    bool ok = found_compatible && found_model && found_addr_cells && found_size_cells;
     print_test_result("qemu-virt: dtb_foreach_property '/'", ok);
-
+    print_test_result("qemu-virt: dtb_property_uint32 '/soc:#address-cells' == 2", addr_cells_ok && size_cells_ok);
     print_test_result("qemu-virt: dtb_property_str '/soc:model' == 'riscv-virtio,qemu'", model_ok);
 
     bool found_pmu = false;
