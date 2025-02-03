@@ -92,6 +92,20 @@ int main(int argc, char **argv)
     ok = memory_node != NULL && strcmp(dtb_node_name(memory_node), "memory@80000000") == 0;
     print_test_result("qemu-virt: dtb_find '/memory'", ok);
 
+    bool found_device_type = false;
+    bool found_reg = true;
+    dtb_foreach_property(memory_node, prop) {
+        char *propname = dtb_property_name(devicetree, prop);
+
+        if (strcmp(propname, "device_type") == 0) {
+            found_device_type = true;
+        } else if (strcmp(propname, "reg") == 0) {
+            found_reg = true;
+        }
+    }
+    ok = found_device_type && found_reg;
+    print_test_result("qemu-virt: dtb_foreach_property '/memory'", ok);
+
     dtb_node serial_node = dtb_find(devicetree, "/soc/serial");
     ok = memory_node != NULL && strcmp(dtb_node_name(serial_node), "serial@10000000") == 0;
     print_test_result("qemu-virt: dtb_find '/soc/serial'", ok);
@@ -103,5 +117,4 @@ int main(int argc, char **argv)
     dtb_node test_node = dtb_next_sibling(serial_node);
     char *test_node_str = dtb_node_name(test_node);
     print_test_result("qemu-virt: dtb_next_sibling '/soc/serial' -> '/soc/test'", strcmp(test_node_str, "test@100000") == 0);
-
 }
