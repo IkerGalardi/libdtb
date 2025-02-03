@@ -38,10 +38,16 @@ uint32_t *next_token(uint32_t *token)
             tokenchar++;
         }
 
-        tokenchar += (uint64_t)tokenchar % 4;
+        if ((uint64_t)tokenchar % 4 != 0) {
+            tokenchar += 4 - (uint64_t)tokenchar % 4;
+        }
         token = (uint32_t *)tokenchar;
-        token++;
 
+        while (*token == 0) {
+            token++;
+        }
+
+        assert((uint64_t)token % 4 == 0);
         assert(*token != DTB_END);
     } else if (*token == DTB_END_NODE) {
         DEBUG_PRINT("%p: DTB_END_NODE\n", (void *)token);
