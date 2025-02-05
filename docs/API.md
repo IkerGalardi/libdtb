@@ -82,3 +82,36 @@ entry
 - `dtb_foreach_rsvmap_entry(dtb, entry)`: iterate over device tree
   - `dtb`: devicetree to iterate reservation map on.
   - `entry`: name of the entry variable.
+
+### Examples
+
+Iterating on the reservation map:
+```C
+    dtb_foreach_rsvmap_entry(devicetree, entry) {
+        allocator_mark_reserved(entry.address, entry.size);
+    }
+```
+
+Iterating on child nodes:
+```C
+    dtb_foreach_child(soc_node, dev) {
+        printf("Found device %s\n", dtb_node_name(dev));
+    }
+```
+
+Iterating on properties:
+```C
+    driver *drv = NULL;
+    void *regs = NULL;
+    dtb_foreach_property(device_node, property) {
+        char *propname = dtb_property_name(property);
+
+        if (strcmp(propname, "compatible") == 0) {
+            char *compatible = dtb_property_string(property);
+            drv = find_driver(compatible);
+        } else if (strcmp(propname, "regs")) {
+            regs = (void *)dtb_property_array()
+        }
+    }
+    device *dev = create_device(drv, regs);
+```
