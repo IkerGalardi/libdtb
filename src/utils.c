@@ -1,5 +1,4 @@
 #include "utils.h"
-#include <stddef.h>
 #include "debug.h"
 
 int strcmp_nodename(const char *pathpart, const char *nodename)
