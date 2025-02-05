@@ -34,6 +34,25 @@ Getting a device tree handle from a pointer:
   - `node`: node to get the next sibling from.
   - *returns*: next sibling node or `NULL` if it does not have any.
 
+### Examples
+
+Finding the memory node:
+```C
+    dtb_node memory_node = dtb_find(devicetree, "/memory");
+    if (memory_node == NULL) {
+        error...
+    }
+```
+
+Iterate on child nodes:
+```C
+    dtb_node first = dtb_first_child(soc_node);
+    for (dtb_node node = first; node != NULL; node = dtb_next_sibling(node)) {
+        char *devname = dtb_node_name(node);
+        printf("Device '%s' available\n", devname);
+    }
+```
+
 ## Properties
 
 - `dtb_property dtb_first_property(dtb_node node)`: returns the first property of the given node.
