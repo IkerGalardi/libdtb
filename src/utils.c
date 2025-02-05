@@ -3,7 +3,7 @@
 
 int strcmp_nodename(const char *pathpart, const char *nodename)
 {
-    while (!(*pathpart == '\0' || *nodename == '\0' || *nodename == '@')) {
+    while (!(*pathpart == '\0' || *nodename == '\0')) {
         if (*pathpart != *nodename) {
             break;
         }
