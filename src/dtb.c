@@ -1,20 +1,21 @@
-#include <string.h>
 #include "dtb/dtb.h"
 #include "utils.h"
 #include "debug.h"
 
 #define DTB_MAGIC_LE DTB_BYTESWAP32(0xd00dfeed)
 
+extern int strcmp(const char *, const char *);
+
 dtb *dtb_fromptr(void *ptr)
 {
     dtb *devicetree = (dtb *)ptr;
 
-    if (devicetree == NULL) {
-        return NULL;
+    if (devicetree == DTB_NULL) {
+        return DTB_NULL;
     }
 
     if (devicetree->magic != DTB_MAGIC_LE) {
-        return NULL;
+        return DTB_NULL;
     }
 
     return devicetree;
@@ -27,7 +28,7 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
     // The first block from the struct node should be a DTB_BEGIN_NODE as it should be refering to
     // the root node of the device tree. If that is not the case we return null to signal an error.
     if (*struct_block != DTB_BEGIN_NODE) {
-        return NULL;
+        return DTB_NULL;
     }
 
     if (strcmp(path, "/") == 0) {
@@ -37,7 +38,7 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
     // Always needs to be an absolute path.
     if (path[0] != '/') {
         DEBUG_PRINT("Path does not start with /\n");
-        return NULL;
+        return DTB_NULL;
     }
 
     char parsed_path[10][256] = {0};
@@ -70,8 +71,8 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
                 parsing_depth++;
             } else {
                 token = dtb_next_sibling(token - 1);
-                if (token == NULL) {
-                    return NULL;
+                if (token == DTB_NULL) {
+                    return DTB_NULL;
                 }
                 token--;
             }
@@ -88,7 +89,7 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
         token++;
     }
 
-    return NULL;
+    return DTB_NULL;
 }
 
 char *dtb_property_name(dtb *devicetree, dtb_node node)
@@ -123,7 +124,7 @@ dtb_property dtb_first_property(dtb_node node)
     dtb_u32 *token = next_token(node);
     while (*token != DTB_PROP) {
         if (*token == DTB_END || *token == DTB_BEGIN_NODE || *token == DTB_END_NODE) {
-            return NULL;
+            return DTB_NULL;
         }
 
         token = next_token(token);
@@ -137,7 +138,7 @@ dtb_property dtb_next_property(dtb_property prop)
     dtb_u32 *token = next_token(prop);
     while (*token != DTB_PROP) {
         if (*token == DTB_END || *token == DTB_BEGIN_NODE || *token == DTB_END_NODE) {
-            return NULL;
+            return DTB_NULL;
         }
 
         token = next_token(token);
@@ -153,7 +154,7 @@ dtb_node dtb_first_child(dtb_node node)
     dtb_u32 *token = next_token(node);
     while (*token != DTB_BEGIN_NODE) {
         if (*token == DTB_END || *token == DTB_END_NODE) {
-            return NULL;
+            return DTB_NULL;
         }
 
         token = next_token(token);
@@ -199,7 +200,7 @@ dtb_node dtb_next_sibling(dtb_node node)
         }
 
         if (*node == DTB_END_NODE) {
-            return NULL;
+            return DTB_NULL;
         }
 
         node++;
@@ -214,7 +215,7 @@ dtb_rsvmap_entry *dtb_first_rsvmap_entry(dtb *devicetree)
     dtb_rsvmap_entry *entry = (dtb_rsvmap_entry *)(dtb_ptr + DTB_BYTESWAP32(devicetree->off_mem_rsvmap));
 
     if (entry->address == 0 && entry->size == 0) {
-        return NULL;
+        return DTB_NULL;
     }
 
     return entry;
@@ -225,7 +226,7 @@ dtb_rsvmap_entry *dtb_next_rsvmap_entry(dtb_rsvmap_entry *entry)
     entry++;
 
     if (entry->address == 0 && entry->size == 0) {
-        return NULL;
+        return DTB_NULL;
     }
 
     return entry;

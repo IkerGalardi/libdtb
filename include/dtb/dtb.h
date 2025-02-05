@@ -2,8 +2,10 @@
 #define _DTB_H
 
 #include <stdint.h>
+#include <stddef.h>
 typedef uint32_t dtb_u32;
 typedef uint64_t dtb_u64;
+#define DTB_NULL NULL
 
 
 #define DTB_BYTESWAP32(num) ((((num)>>24)&0xff) | (((num)<<8)&0xff0000) | \
