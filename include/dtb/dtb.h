@@ -2,6 +2,9 @@
 #define _DTB_H
 
 #include <stdint.h>
+typedef uint32_t dtb_u32;
+typedef uint64_t dtb_u64;
+
 
 #define DTB_BYTESWAP32(num) ((((num)>>24)&0xff) | (((num)<<8)&0xff0000) | \
                         (((num)>>8)&0xff00) | (((num)<<24)&0xff000000))
@@ -14,31 +17,32 @@
 #define DTB_NOP        DTB_BYTESWAP32((uint32_t)0x4)
 #define DTB_END        DTB_BYTESWAP32((uint32_t)0x9)
 
+
 /**
  * @brief Device tree handle
  */
 typedef struct
 {
-    uint32_t magic;
-    uint32_t totalsize;
-    uint32_t off_dt_struct;
-    uint32_t off_dt_strings;
-    uint32_t off_mem_rsvmap;
-    uint32_t version;
-    uint32_t last_comp_version;
-    uint32_t boot_cpuid_phys;
-    uint32_t size_dt_strings;
-    uint32_t size_dt_struct;
+    dtb_u32 magic;
+    dtb_u32 totalsize;
+    dtb_u32 off_dt_struct;
+    dtb_u32 off_dt_strings;
+    dtb_u32 off_mem_rsvmap;
+    dtb_u32 version;
+    dtb_u32 last_comp_version;
+    dtb_u32 boot_cpuid_phys;
+    dtb_u32 size_dt_strings;
+    dtb_u32 size_dt_struct;
 } dtb;
 
 typedef struct __attribute__((packed))
 {
-    uint64_t address;
-    uint64_t size;
+    dtb_u64 address;
+    dtb_u64 size;
 } dtb_rsvmap_entry;
 
-typedef uint32_t* dtb_node;
-typedef uint32_t* dtb_property;
+typedef dtb_u32* dtb_node;
+typedef dtb_u32* dtb_property;
 
 /**
  * @brief Create a device tree object from a pointer.
@@ -49,13 +53,13 @@ dtb *dtb_fromptr(void *ptr);
 
 dtb_node dtb_find(dtb *devicetree, const char *path);
 
-#define dtb_node_name(node) (char *)((uint32_t *)node+1)
+#define dtb_node_name(node) (char *)((dtb_u32 *)node+1)
 
 char *dtb_property_name(dtb *devicetree, dtb_node node);
 
-uint32_t dtb_property_uint32(dtb_property prop);
+dtb_u32 dtb_property_uint32(dtb_property prop);
 
-uint64_t dtb_property_uint64(dtb_property prop);
+dtb_u64 dtb_property_uint64(dtb_property prop);
 
 char *dtb_property_string(dtb_property prop);
 

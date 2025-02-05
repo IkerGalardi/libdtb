@@ -92,14 +92,14 @@ Returns a nul terminated string of the property name.
 - *returns*: nul terminated string containing the name of the property.
 
 ```C
-uint32_t dtb_property_uint32(dtb_property prop)
+dtb_u32 dtb_property_uint32(dtb_property prop)
 ```
 Get the 32 bit unsigned integer value
 - `prop`: property to get the value from
 - *returns*: value of the property.
 
 ```C
-uint64_t dtb_property_uint64(dtb_property prop)
+dtb_u64 dtb_property_uint64(dtb_property prop)
 ```
 Get the 64 bit unsigned integer value
 - `prop`: property to get the value from
@@ -133,7 +133,7 @@ for (dtb_property prop = first; prop != NULL; prop = dtb_next_property(prop))
         regs = (void *)dtb_property_array(property)
         printf("Device registers at %p\n", regs);
     } else if (strcmp(propname, "#address-cells") == 0) {
-        uint32_t addr_cells = dtb_property_uint32(property);
+        dtb_u32 addr_cells = dtb_property_uint32(property);
         prinrtf("Device address cells of size %" PRIu32 "\n", addr_cells)
     }
 }
@@ -143,8 +143,8 @@ for (dtb_property prop = first; prop != NULL; prop = dtb_next_property(prop))
 ## Reservation map
 
 `dtb_rsvmap_entry`structure:
-  - `uint64_t address`: address of the memory reservation.
-  - `uint64_t size`: size of the memory reservation.
+  - `dtb_u64 address`: address of the memory reservation.
+  - `dtb_u64 size`: size of the memory reservation.
 
 ```C
 dtb_rsvmap_entry *dtb_first_rsvmap_entry(dtb *devicetree)

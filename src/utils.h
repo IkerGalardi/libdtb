@@ -1,10 +1,10 @@
 #ifndef _UTILS_
 #define _UTILS_
 
-#include <stdint.h>
+#include "dtb/dtb.h"
 
 int strcmp_nodename(const char *pathpart, const char *nodename);
 
-uint32_t *next_token(uint32_t *token);
+dtb_u32 *next_token(dtb_u32 *token);
 
 #endif // _UTILS_
