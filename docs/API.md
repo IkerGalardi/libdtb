@@ -139,7 +139,7 @@ Iterating on properties:
             char *compatible = dtb_property_string(property);
             drv = find_driver(compatible);
         } else if (strcmp(propname, "regs")) {
-            regs = (void *)dtb_property_array()
+            regs = (void *)dtb_property_array(property)
         }
     }
     device *dev = create_device(drv, regs);
