@@ -5,6 +5,16 @@
 - `dtb *dtb_fromptr(void *ptr)`: returns a device tree handle after doing some checks.
   - `ptr`: pointer to the location the device tree resides.
 
+### Examples
+
+Getting a device tree handle from a pointer:
+```C
+    dtb *devicetree = dtb_fromptr(ptr);
+    if (devicetree == NULL) {
+        error...
+    }
+```
+
 ## Device nodes
 
 - `dtb_node dtb_find(dtb *devicetree, const char *path)`: returns a pointer to the node.
