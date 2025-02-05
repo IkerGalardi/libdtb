@@ -83,6 +83,27 @@ Iterate on child nodes:
   - `prop`: property to get the value from
   - *returns*: value of the property.
 
+### Examples
+
+Iterating on properties of a node:
+```C
+dtb_property first = dtb_first_property(pcie_node);
+for (dtb_property prop = first; prop != NULL; prop = dtb_next_property(prop))
+    char *propname = dtb_property_name(property);
+    if (strcmp(propname, "compatible") == 0) {
+        char *compatible = dtb_property_string(property);
+        printf("Device compatible with '%s\n'", compatible);
+    } else if (strcmp(propname, "regs") == 0) {
+        regs = (void *)dtb_property_array(property)
+        printf("Device registers at %p\n", regs);
+    } else if (strcmp(propname, "#address-cells") == 0) {
+        uint32_t addr_cells = dtb_property_uint32(property);
+        prinrtf("Device address cells of size %" PRIu32 "\n", addr_cells)
+    }
+}
+```
+
+
 ## Reservation map
 
 - `dtb_rsvmap_entry`structure:
