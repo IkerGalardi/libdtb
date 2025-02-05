@@ -8,9 +8,6 @@
 
 #define DTB_BYTESWAP64(num) (DTB_BYTESWAP32(num) << 32 | DTB_BYTESWAP32((num) >> 32))
 
-#define DTB_CONCAT_HELPER(a, b) a ## b
-#define DTB_CONCAT(a, b) DTB_CONCAT_HELPER(a, b)
-
 #define DTB_BEGIN_NODE DTB_BYTESWAP32((uint32_t)0x1)
 #define DTB_END_NODE   DTB_BYTESWAP32((uint32_t)0x2)
 #define DTB_PROP       DTB_BYTESWAP32((uint32_t)0x3)
