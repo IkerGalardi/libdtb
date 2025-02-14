@@ -55,6 +55,8 @@ dtb *dtb_fromptr(void *ptr);
 
 dtb_node dtb_find(dtb *devicetree, const char *path);
 
+dtb_node dtb_find_next(dtb_node node, char *name);
+
 #define dtb_node_name(node) (char *)((dtb_u32 *)node+1)
 
 char *dtb_property_name(dtb *devicetree, dtb_node node);
