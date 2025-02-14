@@ -37,6 +37,14 @@ Returns a pointer to the node.
 - *returns*: a pointer to the device node, `NULL` if it does not exist.
 
 ```C
+dtb_node dtb_find_by_phandle(dtb *devicetree, dtb_u32 phandle)
+```
+Returns a pointer to the node with the phandle given.
+- `devicetree`: handle to the device tree.
+- `phandle`: phandle of the device.
+- *returns*: a pointer to the device node, `NULL` if it does not exist.
+
+```C
 char *dtb_node_name(dtb_node node)
 ```
 Returns a nul terminated string of the node name.
