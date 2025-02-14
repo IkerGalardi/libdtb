@@ -29,6 +29,14 @@ Returns a pointer to the node.
 - *returns*: a pointer to the device node, `NULL` if it does not exist.
 
 ```C
+dtb_node dtb_find_next(dtb_node node, const char *name)
+```
+Returns a pointer to the node.
+- `node`: node to start searching from.
+- `name`: name of the device, does not need the unit address.
+- *returns*: a pointer to the device node, `NULL` if it does not exist.
+
+```C
 char *dtb_node_name(dtb_node node)
 ```
 Returns a nul terminated string of the node name.
