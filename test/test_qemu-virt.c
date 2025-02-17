@@ -117,4 +117,9 @@ int main(int argc, char **argv)
     dtb_node test_node = dtb_next_sibling(serial_node);
     char *test_node_str = dtb_node_name(test_node);
     print_test_result("qemu-virt: dtb_next_sibling '/soc/serial' -> '/soc/test'", strcmp(test_node_str, "test@100000") == 0);
+
+    dtb_node plic_node = dtb_find_by_phandle(devicetree, 0x3);
+    char *plic_node_name = dtb_node_name(plic_node);
+    ok = strcmp(plic_node_name, "plic@c000000") == 0;
+    print_test_result("qemu-virt: dtb_find_by_phandle 0x3 -> /soc/plic", ok);
 }

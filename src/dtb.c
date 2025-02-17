@@ -109,6 +109,33 @@ dtb_node dtb_find_next(dtb_node node, char *name)
     return DTB_NULL;
 }
 
+static dtb_node find_by_phandle_from(dtb *devicetree, dtb_node from, dtb_u32 phandle)
+{
+    dtb_foreach_child(from, child) {
+        dtb_foreach_property(child, prop) {
+            char *propname = dtb_property_name(devicetree, prop);
+            if (strcmp_nodename("phandle", propname) == 0 && dtb_property_uint32(prop) == phandle) {
+                return child;
+            }
+        }
+
+        dtb_node node = find_by_phandle_from(devicetree, child, phandle);
+        if (node != DTB_NULL) {
+            return node;
+        }
+    }
+
+    return DTB_NULL;
+}
+
+dtb_node dtb_find_by_phandle(dtb *devicetree, dtb_u32 phandle)
+{
+    dtb_node root_node = dtb_find(devicetree, "/");
+    assert(root_node != DTB_NULL);
+
+    return find_by_phandle_from(devicetree, root_node, phandle);
+}
+
 char *dtb_property_name(dtb *devicetree, dtb_node node)
 {
     char *strings = (char *)devicetree + DTB_BYTESWAP32(devicetree->off_dt_strings);
