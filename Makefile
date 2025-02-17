@@ -22,10 +22,10 @@ bin/utils-debug.o: src/utils.h src/utils.c src/debug.h
 	$(CC) -c src/utils.c -o bin/utils-debug.o -ggdb $(CFLAGS)
 
 bin/dtb-san.o: include/dtb/dtb.h src/dtb.c src/utils.h src/debug.h
-	$(CC) -c src/dtb.c -o bin/dtb-debug.o -ggdb $(CFLAGS) -fsanitize=address,undefined
+	$(CC) -c src/dtb.c -o bin/dtb-san.o -ggdb $(CFLAGS) -fsanitize=address,undefined
 
 bin/utils-san.o: src/utils.h src/utils.c src/debug.h
-	$(CC) -c src/utils.c -o bin/utils-debug.o -ggdb $(CFLAGS) -fsanitize=address,undefined
+	$(CC) -c src/utils.c -o bin/utils-san.o -ggdb $(CFLAGS) -fsanitize=address,undefined
 
 
 bin/test_qemu-virt: bin/dtb-san.o bin/utils-san.o test/test_qemu-virt.c test/test.h include/dtb/dtb.h
