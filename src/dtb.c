@@ -18,6 +18,10 @@ dtb *dtb_fromptr(void *ptr)
         return DTB_NULL;
     }
 
+    if (devicetree->last_comp_version != DTB_BYTESWAP32(16)) {
+        return DTB_NULL;
+    }
+
     return devicetree;
 }
 
