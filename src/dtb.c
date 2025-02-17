@@ -92,6 +92,23 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
     return DTB_NULL;
 }
 
+dtb_node dtb_find_next(dtb_node node, char *name)
+{
+    node = dtb_next_sibling(node);
+
+    while (node != DTB_NULL) {
+        char *nodename = dtb_node_name(node);
+
+        if (strcmp_nodename(nodename, name) == 0) {
+            return node;
+        }
+
+        node = dtb_next_sibling(node);
+    }
+
+    return DTB_NULL;
+}
+
 char *dtb_property_name(dtb *devicetree, dtb_node node)
 {
     char *strings = (char *)devicetree + DTB_BYTESWAP32(devicetree->off_dt_strings);
