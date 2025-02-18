@@ -135,6 +135,13 @@ Get the array value
 - `prop`: property to get the value from
 - *returns*: value of the property.
 
+```C
+dtb_u32 dtb_property_length(dtb_property prop)
+```
+Get the length of a property
+- `prop`: property to get the length from
+- *returns*: length of the property.
+
 ### Examples
 
 Iterating on properties of a node:
