@@ -122,4 +122,22 @@ int main(int argc, char **argv)
     char *plic_node_name = dtb_node_name(plic_node);
     ok = strcmp(plic_node_name, "plic@c000000") == 0;
     print_test_result("qemu-virt: dtb_find_by_phandle 0x3 -> /soc/plic", ok);
+
+    bool found_sifive_plic = false;
+    bool found_riscv_plic = false;
+    dtb_foreach_property(plic_node, prop) {
+        char *nodename = dtb_property_name(devicetree, prop);
+
+        if (strcmp(nodename, "compatible") == 0) {
+            dtb_foreach_stringlist(prop, str) {
+                if (strcmp(str, "sifive,plic-1.0.0") == 0) {
+                    found_sifive_plic = true;
+                } else if (strcmp(str, "riscv,plic0") == 0) {
+                    found_riscv_plic = true;
+                }
+            }
+        }
+    }
+    ok = found_sifive_plic && found_riscv_plic;
+    print_test_result("qemu-virt: dtb_foreach_stringlist /plic:compatible", ok);
 }
