@@ -30,11 +30,11 @@ bin/utils-san.o: src/utils.h src/utils.c src/debug.h
 
 bin/test_qemu-virt: bin/dtb-san.o bin/utils-san.o test/test_qemu-virt.c test/test.h include/dtb/dtb.h
 	$(CC) -c test/test_qemu-virt.c -o bin/test_qemu-virt.o $(CFLAGS) -ggdb -fsanitize=address,undefined
-	$(CC) -o bin/test_qemu-virt bin/dtb-debug.o bin/utils-debug.o bin/test_qemu-virt.o -ggdb -fsanitize=address,undefined
+	$(CC) -o bin/test_qemu-virt bin/dtb-san.o bin/utils-san.o bin/test_qemu-virt.o -ggdb -fsanitize=address,undefined
 
 bin/test_utils: bin/utils-san.o test/test_utils.c test/test.h
 	$(CC) -c test/test_utils.c -o bin/test_utils.o -Isrc $(CFLAGS) -ggdb -fsanitize=address,undefined
-	$(CC) -o bin/test_utils bin/utils-debug.o bin/test_utils.o -ggdb -fsanitize=address,undefined
+	$(CC) -o bin/test_utils bin/utils-san.o bin/test_utils.o -ggdb -fsanitize=address,undefined
 
 test: bin/test_utils bin/test_qemu-virt
 	@ bin/test_utils
