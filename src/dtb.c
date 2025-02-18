@@ -167,6 +167,11 @@ char *dtb_property_array(dtb_property prop)
     return (void *)(prop + 3);
 }
 
+dtb_u32 dtb_property_length(dtb_property prop)
+{
+    return DTB_BYTESWAP32(*(prop + 1));
+}
+
 dtb_property dtb_first_property(dtb_node node)
 {
     dtb_u32 *token = next_token(node);
