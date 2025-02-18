@@ -73,6 +73,10 @@ char *dtb_property_array(dtb_property prop);
 
 dtb_u32 dtb_property_length(dtb_property prop);
 
+char *dtb_property_next_string(char *str);
+
+#define dtb_foreach_stringlist(prop, str) for (char *str = dtb_property_string(prop); (str - (char *)(prop+1)) < dtb_property_length(prop) ; str = dtb_property_next_string(str))
+
 #define dtb_foreach_property(node, name) for (dtb_property name = dtb_first_property(node); name != NULL; name = dtb_next_property(name))
 
 dtb_property dtb_first_property(dtb_property prop);

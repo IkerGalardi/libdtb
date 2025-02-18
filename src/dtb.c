@@ -172,6 +172,15 @@ dtb_u32 dtb_property_length(dtb_property prop)
     return DTB_BYTESWAP32(*(prop + 1));
 }
 
+char *dtb_property_next_string(char *str)
+{
+    while (*str != '\0') {
+        str++;
+    }
+
+    return str+1;
+}
+
 dtb_property dtb_first_property(dtb_node node)
 {
     dtb_u32 *token = next_token(node);
