@@ -95,4 +95,6 @@ dtb_rsvmap_entry *dtb_next_rsvmap_entry(dtb_rsvmap_entry *entry);
 
 #define dtb_foreach_rsvmap_entry(dtb, entry) for (dtb_rsvmap_entry *entry = dtb_first_rsvmap_entry(dtb); entry != NULL; entry = dtb_next_rsvmap_entry(entry))
 
+dtb_u32 *dtb_next_token(dtb_u32 *token);
+
 #endif // _DTB_H

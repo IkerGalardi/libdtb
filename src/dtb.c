@@ -183,13 +183,13 @@ char *dtb_property_next_string(char *str)
 
 dtb_property dtb_first_property(dtb_node node)
 {
-    dtb_u32 *token = next_token(node);
+    dtb_u32 *token = dtb_next_token(node);
     while (*token != DTB_PROP) {
         if (*token == DTB_END || *token == DTB_BEGIN_NODE || *token == DTB_END_NODE) {
             return DTB_NULL;
         }
 
-        token = next_token(token);
+        token = dtb_next_token(token);
     }
 
     return token;
@@ -197,13 +197,13 @@ dtb_property dtb_first_property(dtb_node node)
 
 dtb_property dtb_next_property(dtb_property prop)
 {
-    dtb_u32 *token = next_token(prop);
+    dtb_u32 *token = dtb_next_token(prop);
     while (*token != DTB_PROP) {
         if (*token == DTB_END || *token == DTB_BEGIN_NODE || *token == DTB_END_NODE) {
             return DTB_NULL;
         }
 
-        token = next_token(token);
+        token = dtb_next_token(token);
     }
 
     return token;
@@ -213,13 +213,13 @@ dtb_node dtb_first_child(dtb_node node)
 {
     assert(*node == DTB_BEGIN_NODE);
 
-    dtb_u32 *token = next_token(node);
+    dtb_u32 *token = dtb_next_token(node);
     while (*token != DTB_BEGIN_NODE) {
         if (*token == DTB_END || *token == DTB_END_NODE) {
             return DTB_NULL;
         }
 
-        token = next_token(token);
+        token = dtb_next_token(token);
     }
 
     assert(*token == DTB_BEGIN_NODE);
@@ -292,4 +292,55 @@ dtb_rsvmap_entry *dtb_next_rsvmap_entry(dtb_rsvmap_entry *entry)
     }
 
     return entry;
+}
+
+dtb_u32 *dtb_next_token(dtb_u32 *token)
+{
+    assert((dtb_u64)token % 4 == 0);
+
+    if (*token == DTB_BEGIN_NODE) {
+        DEBUG_PRINT("%p: DTB_BEGIN_NODE %s\n", (void *)token, (char *)(token + 1));
+        token++;
+
+        char *tokenchar = (char *)token;
+        while (*tokenchar != '\0') {
+            tokenchar++;
+        }
+
+        if ((dtb_u64)tokenchar % 4 != 0) {
+            tokenchar += 4 - (dtb_u64)tokenchar % 4;
+        }
+        token = (dtb_u32 *)tokenchar;
+
+        while (*token == 0) {
+            token++;
+        }
+
+        assert((dtb_u64)token % 4 == 0);
+        assert(*token != DTB_END);
+    } else if (*token == DTB_END_NODE) {
+        DEBUG_PRINT("%p: DTB_END_NODE\n", (void *)token);
+        token++;
+
+        assert(*token != DTB_PROP);
+    } else if (*token == DTB_PROP) {
+        dtb_u32 len = DTB_BYTESWAP32(*(token + 1));
+        DEBUG_PRINT("%p: PROP %" PRIu32 "\n", (void *)token, len);
+        if (len % sizeof(dtb_u32) == 0) {
+            token += len / sizeof(dtb_u32) + 3;
+        } else {
+            dtb_u32 len_rounding = 4 - (len % 4);
+            token += (len + len_rounding) / sizeof(dtb_u32) + 3;
+        }
+
+        assert(*token != DTB_END);
+    } else if (*token == DTB_NOP) {
+        DEBUG_PRINT("%p: DTB_NOP %s\n", (void *)token, (char *)(token + 1));
+        token++;
+    } else {
+        assert(false);
+    }
+
+    assert((dtb_u64)token % 4 == 0);
+    return token;
 }
