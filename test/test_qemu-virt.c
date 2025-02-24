@@ -140,4 +140,45 @@ int main(int argc, char **argv)
     }
     ok = found_sifive_plic && found_riscv_plic;
     print_test_result("qemu-virt: dtb_foreach_stringlist /plic:compatible", ok);
+
+    bool found_qemu_platform = false;
+    bool found_simple_bus = false;
+    dtb_node platform_bus = dtb_find(devicetree, "/platform-bus");
+    dtb_foreach_property(platform_bus, prop) {
+        char *propname = dtb_property_name(devicetree, prop);
+
+        if (strcmp(propname, "compatible") == 0) {
+            dtb_foreach_stringlist(prop, str) {
+                if (strcmp(str, "qemu,platform") == 0) {
+                    found_qemu_platform = true;
+                } else if (strcmp(str, "simple-bus") == 0) {
+                    found_simple_bus = true;
+                }
+            }
+        }
+    }
+    ok = found_qemu_platform && found_simple_bus;
+    print_test_result("qemu-virt: dtb_foreach_stringlist /platform-bus:compatible", ok);
+
+
+    bool found_sifive_test1 = false;
+    bool found_sifive_test0 = false;
+    bool found_syscon = false;
+    dtb_foreach_property(test_node, prop) {
+        char *propname = dtb_property_name(devicetree, prop);
+
+        if (strcmp(propname, "compatible") == 0) {
+            dtb_foreach_stringlist(prop, str) {
+                if (strcmp(str, "sifive,test1") == 0) {
+                    found_sifive_test1 = true;
+                } else if (strcmp(str, "sifive,test0") == 0) {
+                    found_sifive_test0 = true;
+                } else if (strcmp(str, "syscon")) {
+                    found_syscon = true;
+                }
+            }
+        }
+    }
+    ok = found_sifive_test1 && found_sifive_test0 && found_syscon;
+    print_test_result("qemu-virt: dtb_foreach_stringlist /soc/test:compatible", ok);
 }
