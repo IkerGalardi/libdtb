@@ -62,4 +62,26 @@ int main(int argc, char **argv)
     test_dtb_find("/soc/virtio_mmio@10001000", "virtio_mmio@10001000");
     test_dtb_find("/soc/plic", "plic@c000000");
     test_dtb_find("/soc/clint", "clint@2000000");
+
+    bool correct_addr_cells = false;
+    bool correct_size_cells = false;
+    bool correct_compatible = false;
+    bool correct_model = false;
+    dtb_foreach_property(root_node, prop) {
+        char *propname = dtb_property_name(devicetree, prop);
+
+        if (strcmp(propname, "#address-cells") == 0) {
+            correct_addr_cells = dtb_property_uint32(prop) == 0x2;
+        } else if (strcmp(propname, "#size-cells") == 0) {
+            correct_size_cells = dtb_property_uint32(prop) == 0x2;
+        } else if (strcmp(propname, "compatible") == 0) {
+            correct_compatible = strcmp(dtb_property_string(prop), "riscv-virtio") == 0;
+        } else if (strcmp(propname, "model") == 0) {
+            correct_model = strcmp(dtb_property_string(prop), "riscv-virtio,qemu") == 0;
+        }
+    }
+    print_test_result("qemu-virt: '/' property '#address-cells'", correct_addr_cells);
+    print_test_result("qemu-virt: '/' property '#size-cells'", correct_size_cells);
+    print_test_result("qemu-virt: '/' property 'compatible'", correct_compatible);
+    print_test_result("qemu-virt: '/' property 'model'", correct_model);
 }
