@@ -34,7 +34,7 @@ int main(int argc, char **argv)
     dtb_node root_node = dtb_find(devicetree, "/");
     print_test_result("qemu-virt: dtb_find '/'", root_node != NULL);
 
-    test_dtb_find("/pmu", "pmu");
+    dtb_node pmu_node = test_dtb_find("/pmu", "pmu");
     test_dtb_find("/fw-cfg", "fw-cfg@10100000");
     test_dtb_find("/flash", "flash@20000000");
     test_dtb_find("/chosen", "chosen");
@@ -84,4 +84,18 @@ int main(int argc, char **argv)
     print_test_result("qemu-virt: '/' property '#size-cells'", correct_size_cells);
     print_test_result("qemu-virt: '/' property 'compatible'", correct_compatible);
     print_test_result("qemu-virt: '/' property 'model'", correct_model);
+
+    bool found_riscv_evt_mhpmcounters = false;
+    correct_compatible = false;
+    dtb_foreach_property(pmu_node, prop) {
+        char *propname = dtb_property_name(devicetree, prop);
+
+        if (strcmp(propname, "riscv,event-to-mhpmcounters") == 0) {
+            found_riscv_evt_mhpmcounters = true;
+        } else if (strcmp(propname, "compatible") == 0) {
+            correct_compatible = strcmp(dtb_property_string(prop), "riscv,pmu") == 0;
+        }
+    }
+    print_test_result("qemu-virt: '/pmu' property 'riscv,event-to-mhpmcounters'", found_riscv_evt_mhpmcounters);
+    print_test_result("qemu-virt: '/pmu' property 'compatible'", correct_compatible);
 }
