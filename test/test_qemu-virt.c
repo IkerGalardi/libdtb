@@ -35,7 +35,7 @@ int main(int argc, char **argv)
     print_test_result("qemu-virt: dtb_find '/'", root_node != NULL);
 
     dtb_node pmu_node = test_dtb_find("/pmu", "pmu");
-    test_dtb_find("/fw-cfg", "fw-cfg@10100000");
+    dtb_node fw_cfg = test_dtb_find("/fw-cfg", "fw-cfg@10100000");
     test_dtb_find("/flash", "flash@20000000");
     test_dtb_find("/chosen", "chosen");
     test_dtb_find("/poweroff", "poweroff");
@@ -98,4 +98,22 @@ int main(int argc, char **argv)
     }
     print_test_result("qemu-virt: '/pmu' property 'riscv,event-to-mhpmcounters'", found_riscv_evt_mhpmcounters);
     print_test_result("qemu-virt: '/pmu' property 'compatible'", correct_compatible);
+
+    bool found_dma_coherent = false;
+    bool found_reg = false;
+    correct_compatible = false;
+    dtb_foreach_property(fw_cfg, prop) {
+        char *propname = dtb_property_name(devicetree, prop);
+
+        if (strcmp(propname, "dma-coherent") == 0) {
+            found_dma_coherent = true;
+        } else if (strcmp(propname, "reg") == 0) {
+            found_reg = true;
+        } else if (strcmp(propname, "compatible") == 0) {
+            correct_compatible = strcmp(dtb_property_string(prop), "qemu,fw-cfg-mmio") == 0;
+        }
+    }
+    print_test_result("qemu-virt: '/fw-cfg' property 'dma-coherent'", found_dma_coherent);
+    print_test_result("qemu-virt: '/fw-cfg' property 'reg'", found_reg);
+    print_test_result("qemu-virt: '/fw-cfg' property 'compatible'", correct_compatible);
 }
