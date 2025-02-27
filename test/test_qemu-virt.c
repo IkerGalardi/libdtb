@@ -37,7 +37,7 @@ int main(int argc, char **argv)
     dtb_node pmu_node = test_dtb_find("/pmu", "pmu");
     dtb_node fw_cfg = test_dtb_find("/fw-cfg", "fw-cfg@10100000");
     dtb_node flash = test_dtb_find("/flash", "flash@20000000");
-    test_dtb_find("/chosen", "chosen");
+    dtb_node chosen = test_dtb_find("/chosen", "chosen");
     test_dtb_find("/poweroff", "poweroff");
     test_dtb_find("/reboot", "reboot");
     test_dtb_find("/platform-bus", "platform-bus@4000000");
@@ -134,4 +134,18 @@ int main(int argc, char **argv)
     print_test_result("qemu-virt: '/flash' property 'bank-width'", correct_bank_width);
     print_test_result("qemu-virt: '/flash' property 'reg'", found_reg);
     print_test_result("qemu-virt: '/flash' property 'compatible'", correct_compatible);
+
+    bool found_rng_seed = false;
+    bool correct_stdout_path = false;
+    dtb_foreach_property(chosen, prop) {
+        char *propname = dtb_property_name(devicetree, prop);
+
+        if (strcmp(propname, "rng-seed") == 0) {
+            found_rng_seed = true;
+        } else if (strcmp(propname, "stdout-path") == 0) {
+            correct_stdout_path = strcmp(dtb_property_string(prop), "/soc/serial@10000000") == 0;
+        }
+    }
+    print_test_result("qemu-virt: '/chosen' property 'rng-seed'", found_rng_seed);
+    print_test_result("qemu-virt: '/chosen' property 'stdout-path'", correct_stdout_path);
 }
