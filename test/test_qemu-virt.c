@@ -39,7 +39,7 @@ int main(int argc, char **argv)
     dtb_node flash = test_dtb_find("/flash", "flash@20000000");
     dtb_node chosen = test_dtb_find("/chosen", "chosen");
     dtb_node poweroff = test_dtb_find("/poweroff", "poweroff");
-    test_dtb_find("/reboot", "reboot");
+    dtb_node reboot = test_dtb_find("/reboot", "reboot");
     test_dtb_find("/platform-bus", "platform-bus@4000000");
     test_dtb_find("/memory", "memory@80000000");
     test_dtb_find("/cpus", "cpus");
@@ -170,4 +170,26 @@ int main(int argc, char **argv)
     print_test_result("qemu-virt: '/poweroff' property 'offset'", correct_offset);
     print_test_result("qemu-virt: '/poweroff' property 'regmap'", correct_regmap);
     print_test_result("qemu-virt: '/poweroff' property 'compatible'", correct_compatible);
+
+    correct_value = false;
+    correct_offset = false;
+    correct_regmap = false;
+    correct_compatible = false;
+    dtb_foreach_property(reboot, prop) {
+        char *propname = dtb_property_name(devicetree, prop);
+
+        if (strcmp(propname, "value") == 0) {
+            correct_value = dtb_property_uint32(prop) == 0x7777;
+        } else if (strcmp(propname, "offset") == 0) {
+            correct_offset = dtb_property_uint32(prop) == 0x0;
+        } else if (strcmp(propname, "regmap") == 0) {
+            correct_regmap = dtb_property_uint32(prop) == 0x04;
+        } else if (strcmp(propname, "compatible") == 0) {
+            correct_compatible = strcmp(dtb_property_string(prop), "syscon-reboot") == 0;
+        }
+    }
+    print_test_result("qemu-virt: '/reboot' property 'value'", correct_value);
+    print_test_result("qemu-virt: '/reboot' property 'offset'", correct_offset);
+    print_test_result("qemu-virt: '/reboot' property 'regmap'", correct_regmap);
+    print_test_result("qemu-virt: '/reboot' property 'compatible'", correct_compatible);
 }
