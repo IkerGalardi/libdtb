@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 
     dtb_node pmu_node = test_dtb_find("/pmu", "pmu");
     dtb_node fw_cfg = test_dtb_find("/fw-cfg", "fw-cfg@10100000");
-    test_dtb_find("/flash", "flash@20000000");
+    dtb_node flash = test_dtb_find("/flash", "flash@20000000");
     test_dtb_find("/chosen", "chosen");
     test_dtb_find("/poweroff", "poweroff");
     test_dtb_find("/reboot", "reboot");
@@ -116,4 +116,22 @@ int main(int argc, char **argv)
     print_test_result("qemu-virt: '/fw-cfg' property 'dma-coherent'", found_dma_coherent);
     print_test_result("qemu-virt: '/fw-cfg' property 'reg'", found_reg);
     print_test_result("qemu-virt: '/fw-cfg' property 'compatible'", correct_compatible);
+
+    bool correct_bank_width = false;
+    found_reg = false;
+    correct_compatible = false;
+    dtb_foreach_property(flash, prop) {
+        char *propname = dtb_property_name(devicetree, prop);
+
+        if (strcmp(propname, "bank-width") == 0) {
+            correct_bank_width = dtb_property_uint32(prop) == 0x04;
+        } else if (strcmp(propname, "reg") == 0) {
+            found_reg = true;
+        } else if (strcmp(propname, "compatible") == 0) {
+            correct_compatible = strcmp(dtb_property_string(prop), "cfi-flash") == 0;
+        }
+    }
+    print_test_result("qemu-virt: '/flash' property 'bank-width'", correct_bank_width);
+    print_test_result("qemu-virt: '/flash' property 'reg'", found_reg);
+    print_test_result("qemu-virt: '/flash' property 'compatible'", correct_compatible);
 }
