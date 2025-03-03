@@ -40,7 +40,7 @@ int main(int argc, char **argv)
     dtb_node chosen = test_dtb_find("/chosen", "chosen");
     dtb_node poweroff = test_dtb_find("/poweroff", "poweroff");
     dtb_node reboot = test_dtb_find("/reboot", "reboot");
-    test_dtb_find("/platform-bus", "platform-bus@4000000");
+    dtb_node platform_bus = test_dtb_find("/platform-bus", "platform-bus@4000000");
     test_dtb_find("/memory", "memory@80000000");
     test_dtb_find("/cpus", "cpus");
     test_dtb_find("/cpus/cpu@0", "cpu@0");
@@ -192,4 +192,39 @@ int main(int argc, char **argv)
     print_test_result("qemu-virt: '/reboot' property 'offset'", correct_offset);
     print_test_result("qemu-virt: '/reboot' property 'regmap'", correct_regmap);
     print_test_result("qemu-virt: '/reboot' property 'compatible'", correct_compatible);
+
+    bool correct_interrupt_parent = false;
+    bool found_ranges = false;
+    correct_addr_cells = false;
+    correct_size_cells = false;
+    correct_compatible = false;
+    dtb_foreach_property(platform_bus, prop) {
+        char *propname = dtb_property_name(devicetree, prop);
+
+        if (strcmp(propname, "interrupt-parent") == 0) {
+            correct_interrupt_parent = dtb_property_uint32(prop) == 0x03;
+        } else if (strcmp(propname, "ranges") == 0) {
+            found_ranges = true;
+        } else if (strcmp(propname, "#address-cells") == 0) {
+            correct_addr_cells = dtb_property_uint32(prop) == 0x01;
+        } else if (strcmp(propname, "#size-cells") == 0) {
+            correct_size_cells = dtb_property_uint32(prop) == 0x01;
+        } else if (strcmp(propname, "compatible") == 0) {
+            bool found_qemu = false;
+            bool found_simple = false;
+            dtb_foreach_stringlist(prop, name) {
+                if (strcmp(name, "qemu,platform") == 0) {
+                    found_qemu = true;
+                } else if (strcmp(name, "simple-bus") == 0) {
+                    found_simple = true;
+                }
+            }
+            correct_compatible = found_qemu && found_simple;
+        }
+    }
+    print_test_result("qemu-virt: '/platform-bus' property 'interrupt-parent'", correct_interrupt_parent);
+    print_test_result("qemu-virt: '/platform-bus' property 'ranges'", found_ranges);
+    print_test_result("qemu-virt: '/platform-bus' property '#address-cells'", correct_addr_cells);
+    print_test_result("qemu-virt: '/platform-bus' property '#size-cells'", correct_size_cells);
+    print_test_result("qemu-virt: '/platform-bus' property 'compatible'", correct_compatible);
 }
