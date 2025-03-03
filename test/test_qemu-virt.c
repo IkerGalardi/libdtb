@@ -42,7 +42,7 @@ int main(int argc, char **argv)
     dtb_node reboot = test_dtb_find("/reboot", "reboot");
     dtb_node platform_bus = test_dtb_find("/platform-bus", "platform-bus@4000000");
     dtb_node memory = test_dtb_find("/memory", "memory@80000000");
-    test_dtb_find("/cpus", "cpus");
+    dtb_node cpus = test_dtb_find("/cpus", "cpus");
     test_dtb_find("/cpus/cpu@0", "cpu@0");
     test_dtb_find("/cpus/cpu-map", "cpu-map");
     test_dtb_find("/cpus/cpu-map/cluster0", "cluster0");
@@ -241,4 +241,22 @@ int main(int argc, char **argv)
     }
     print_test_result("qemu-virt: '/memory' property 'device_type'", correct_device_type);
     print_test_result("qemu-virt: '/memory' property 'reg'", found_reg);
+
+    correct_addr_cells = false;
+    correct_size_cells = false;
+    bool correct_timebase_frequency = false;
+    dtb_foreach_property(cpus, prop) {
+        char *propname = dtb_property_name(devicetree, prop);
+
+        if (strcmp(propname, "#address-cells") == 0) {
+            correct_addr_cells = dtb_property_uint32(prop) == 0x01;
+        } else if (strcmp(propname, "#size-cells") == 0) {
+            correct_size_cells = dtb_property_uint32(prop) == 0x00;
+        } else if (strcmp(propname, "timebase-frequency") == 0) {
+            correct_timebase_frequency = dtb_property_uint32(prop) == 0x989680;
+        }
+    }
+    print_test_result("qemu-virt: '/cpus' property '#address-cells'", correct_addr_cells);
+    print_test_result("qemu-virt: '/cpus' property '#size-cells'", correct_size_cells);
+    print_test_result("qemu-virt: '/cpus' property 'timebase-frequency'", correct_timebase_frequency);
 }
