@@ -41,7 +41,7 @@ int main(int argc, char **argv)
     dtb_node poweroff = test_dtb_find("/poweroff", "poweroff");
     dtb_node reboot = test_dtb_find("/reboot", "reboot");
     dtb_node platform_bus = test_dtb_find("/platform-bus", "platform-bus@4000000");
-    test_dtb_find("/memory", "memory@80000000");
+    dtb_node memory = test_dtb_find("/memory", "memory@80000000");
     test_dtb_find("/cpus", "cpus");
     test_dtb_find("/cpus/cpu@0", "cpu@0");
     test_dtb_find("/cpus/cpu-map", "cpu-map");
@@ -227,4 +227,18 @@ int main(int argc, char **argv)
     print_test_result("qemu-virt: '/platform-bus' property '#address-cells'", correct_addr_cells);
     print_test_result("qemu-virt: '/platform-bus' property '#size-cells'", correct_size_cells);
     print_test_result("qemu-virt: '/platform-bus' property 'compatible'", correct_compatible);
+
+    bool correct_device_type = false;
+    found_reg = false;
+    dtb_foreach_property(memory, prop) {
+        char *propname = dtb_property_name(devicetree, prop);
+
+        if (strcmp(propname, "device_type") == 0) {
+            correct_device_type = strcmp(dtb_property_string(prop), "memory") == 0;
+        } else if (strcmp(propname, "reg") == 0) {
+            found_reg = true;
+        }
+    }
+    print_test_result("qemu-virt: '/memory' property 'device_type'", correct_device_type);
+    print_test_result("qemu-virt: '/memory' property 'reg'", found_reg);
 }
