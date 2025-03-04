@@ -27,7 +27,7 @@ dtb *dtb_fromptr(void *ptr)
 
 dtb_node dtb_find(dtb *devicetree, const char *path)
 {
-    dtb_u32 *struct_block = (dtb_u32 *)((uint8_t *)devicetree + DTB_BYTESWAP32(devicetree->off_dt_struct));
+    dtb_u32 *struct_block = (dtb_u32 *)((dtb_u8 *)devicetree + DTB_BYTESWAP32(devicetree->off_dt_struct));
 
     // The first block from the struct node should be a DTB_BEGIN_NODE as it should be refering to
     // the root node of the device tree. If that is not the case we return null to signal an error.
@@ -46,8 +46,8 @@ dtb_node dtb_find(dtb *devicetree, const char *path)
     }
 
     char parsed_path[10][256] = {0};
-    size_t parsed_i = 0;
-    size_t path_depth = 0;
+    dtb_u64 parsed_i = 0;
+    dtb_u64 path_depth = 0;
     int i = 1;
     while (path[i] != '\0') {
         if (path[i] == '/') {
@@ -152,9 +152,9 @@ dtb_u32 dtb_property_uint32(dtb_property prop)
     return DTB_BYTESWAP32(*(prop + 3));
 }
 
-uint64_t dtb_property_uint64(dtb_property prop)
+dtb_u64 dtb_property_uint64(dtb_property prop)
 {
-    return DTB_BYTESWAP64(*(uint64_t *)(prop + 3));
+    return DTB_BYTESWAP64(*(dtb_u64 *)(prop + 3));
 }
 
 char *dtb_property_string(dtb_property prop)
