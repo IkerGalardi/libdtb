@@ -46,7 +46,7 @@ int main(int argc, char **argv)
     dtb_node cpu0 = test_dtb_find("/cpus/cpu@0", "cpu@0");
     test_dtb_find("/cpus/cpu-map", "cpu-map");
     test_dtb_find("/cpus/cpu-map/cluster0", "cluster0");
-    test_dtb_find("/cpus/cpu-map/cluster0/core0", "core0");
+    dtb_node core0 = test_dtb_find("/cpus/cpu-map/cluster0/core0", "core0");
     test_dtb_find("/soc", "soc");
     test_dtb_find("/soc/rtc", "rtc@101000");
     test_dtb_find("/soc/serial", "serial@10000000");
@@ -293,4 +293,14 @@ int main(int argc, char **argv)
     print_test_result("qemu-virt: '/cpus/cpu@0' property 'compatible'", correct_compatible);
     print_test_result("qemu-virt: '/cpus/cpu@0' property 'riscv,isa'", correct_riscv_isa);
     print_test_result("qemu-virt: '/cpus/cpu@0' property 'mmu-type'", correct_mmu_type);
+
+    bool correct_cpu = false;
+    dtb_foreach_property(core0, prop) {
+        char *propname = dtb_property_name(devicetree, prop);
+
+        if (strcmp(propname, "cpu") == 0) {
+            correct_cpu = dtb_property_uint32(prop) == 0x01;
+        }
+    }
+    print_test_result("qemu-virt: '/cpus/cpu-map/cluster0/core0' property 'cpu'", correct_cpu);
 }
