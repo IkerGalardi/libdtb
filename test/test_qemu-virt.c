@@ -43,7 +43,7 @@ int main(int argc, char **argv)
     dtb_node platform_bus = test_dtb_find("/platform-bus", "platform-bus@4000000");
     dtb_node memory = test_dtb_find("/memory", "memory@80000000");
     dtb_node cpus = test_dtb_find("/cpus", "cpus");
-    test_dtb_find("/cpus/cpu@0", "cpu@0");
+    dtb_node cpu0 = test_dtb_find("/cpus/cpu@0", "cpu@0");
     test_dtb_find("/cpus/cpu-map", "cpu-map");
     test_dtb_find("/cpus/cpu-map/cluster0", "cluster0");
     test_dtb_find("/cpus/cpu-map/cluster0/core0", "core0");
@@ -259,4 +259,38 @@ int main(int argc, char **argv)
     print_test_result("qemu-virt: '/cpus' property '#address-cells'", correct_addr_cells);
     print_test_result("qemu-virt: '/cpus' property '#size-cells'", correct_size_cells);
     print_test_result("qemu-virt: '/cpus' property 'timebase-frequency'", correct_timebase_frequency);
+
+    bool correct_phandle = false;
+    correct_device_type = false;
+    found_reg = false;
+    bool correct_status = false;
+    correct_compatible = false;
+    bool correct_riscv_isa = false;
+    bool correct_mmu_type = false;
+    dtb_foreach_property(cpu0, prop) {
+        char *propname = dtb_property_name(devicetree, prop);
+
+        if (strcmp(propname, "phandle") == 0) {
+            correct_phandle = dtb_property_uint32(prop) == 0x01;
+        } else if (strcmp(propname, "device_type") == 0) {
+            correct_device_type = strcmp(dtb_property_string(prop), "cpu") == 0;
+        } else if (strcmp(propname, "reg") == 0) {
+            found_reg = true;
+        } else if (strcmp(propname, "status") == 0) {
+            correct_status = strcmp(dtb_property_string(prop), "okay") == 0;
+        } else if (strcmp(propname, "compatible") == 0) {
+            correct_compatible = strcmp(dtb_property_string(prop), "riscv") == 0;
+        } else if (strcmp(propname, "riscv,isa") == 0) {
+            correct_riscv_isa = strcmp(dtb_property_string(prop), "rv64imafdch_zicsr_zifencei_zihintpause_zba_zbb_zbc_zbs_sstc") == 0;
+        } else if (strcmp(propname, "mmu-type") == 0) {
+            correct_mmu_type = strcmp(dtb_property_string(prop), "riscv,sv48") == 0;
+        }
+    }
+    print_test_result("qemu-virt: '/cpus/cpu@0' property 'phandle'", correct_phandle);
+    print_test_result("qemu-virt: '/cpus/cpu@0' property 'device_type'", correct_device_type);
+    print_test_result("qemu-virt: '/cpus/cpu@0' property 'reg'", found_reg);
+    print_test_result("qemu-virt: '/cpus/cpu@0' property 'status'", correct_status);
+    print_test_result("qemu-virt: '/cpus/cpu@0' property 'compatible'", correct_compatible);
+    print_test_result("qemu-virt: '/cpus/cpu@0' property 'riscv,isa'", correct_riscv_isa);
+    print_test_result("qemu-virt: '/cpus/cpu@0' property 'mmu-type'", correct_mmu_type);
 }
