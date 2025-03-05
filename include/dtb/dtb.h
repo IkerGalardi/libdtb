@@ -8,7 +8,6 @@ typedef uint32_t dtb_u32;
 typedef uint64_t dtb_u64;
 #define DTB_NULL NULL
 
-
 #define DTB_BYTESWAP32(num) ((((num)>>24)&0xff) | (((num)<<8)&0xff0000) | \
                         (((num)>>8)&0xff00) | (((num)<<24)&0xff000000))
 
@@ -20,10 +19,6 @@ typedef uint64_t dtb_u64;
 #define DTB_NOP        DTB_BYTESWAP32((dtb_u32)0x4)
 #define DTB_END        DTB_BYTESWAP32((dtb_u32)0x9)
 
-
-/**
- * @brief Device tree handle
- */
 typedef struct
 {
     dtb_u32 magic;
@@ -47,11 +42,6 @@ typedef struct __attribute__((packed))
 typedef dtb_u32* dtb_node;
 typedef dtb_u32* dtb_property;
 
-/**
- * @brief Create a device tree object from a pointer.
- *
- * @param ptr: pointer to a buffer containing the device tree.
- */
 dtb *dtb_fromptr(void *ptr);
 
 dtb_node dtb_find(dtb *devicetree, const char *path);
