@@ -47,7 +47,7 @@ int main(int argc, char **argv)
     test_dtb_find("/cpus/cpu-map", "cpu-map");
     test_dtb_find("/cpus/cpu-map/cluster0", "cluster0");
     dtb_node core0 = test_dtb_find("/cpus/cpu-map/cluster0/core0", "core0");
-    test_dtb_find("/soc", "soc");
+    dtb_node soc = test_dtb_find("/soc", "soc");
     test_dtb_find("/soc/rtc", "rtc@101000");
     test_dtb_find("/soc/serial", "serial@10000000");
     test_dtb_find("/soc/test", "test@100000");
@@ -303,4 +303,26 @@ int main(int argc, char **argv)
         }
     }
     print_test_result("qemu-virt: '/cpus/cpu-map/cluster0/core0' property 'cpu'", correct_cpu);
+
+    correct_addr_cells = false;
+    correct_size_cells = false;
+    correct_compatible = false;
+    found_ranges = false;
+    dtb_foreach_property(soc, prop) {
+        char *propname = dtb_property_name(devicetree, prop);
+
+        if (strcmp(propname, "#address-cells") == 0) {
+            correct_addr_cells = dtb_property_uint32(prop) == 0x02;
+        } else if (strcmp(propname, "#size-cells") == 0) {
+            correct_size_cells = dtb_property_uint32(prop) == 0x02;
+        } else if (strcmp(propname, "compatible") == 0) {
+            correct_compatible = strcmp(dtb_property_string(prop), "simple-bus") == 0;
+        } else if (strcmp(propname, "ranges") == 0) {
+            found_ranges = true;
+        }
+    }
+    print_test_result("qemu-virt: '/soc' property '#address-cells'", correct_addr_cells);
+    print_test_result("qemu-virt: '/soc' property '#size-cells'", correct_size_cells);
+    print_test_result("qemu-virt: '/soc' property 'compatible'", correct_compatible);
+    print_test_result("qemu-virt: '/soc' property 'ranges'", found_ranges);
 }
