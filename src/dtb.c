@@ -6,6 +6,18 @@
 
 extern int strcmp(const char *, const char *);
 
+static void dtb_memcpy(void *dest, void *src, dtb_u64 size)
+{
+    char *cdest = (char *)dest;
+    char *csrc = (char *)src;
+    while (size > 0) {
+        *cdest = *csrc;
+        cdest++;
+        csrc++;
+        size--;
+    }
+}
+
 dtb *dtb_fromptr(void *ptr)
 {
     dtb *devicetree = (dtb *)ptr;
@@ -269,6 +281,33 @@ dtb_node dtb_next_sibling(dtb_node node)
     }
 
     return node;
+}
+
+dtb_u64 dtb_reg_start(dtb_u32 *reg, dtb_u8 addr_cells)
+{
+    assert((addr_cells == 1 || addr_cells == 2));
+
+    if (addr_cells == 1) {
+        return DTB_BYTESWAP32(*reg);
+    } else {
+        dtb_u64 reg_be;
+        dtb_memcpy(&reg_be, reg, addr_cells * sizeof(dtb_u32));
+        return DTB_BYTESWAP64(reg_be);
+    }
+}
+
+dtb_u64 dtb_reg_size(dtb_u32 *reg, dtb_u8 addr_cells, dtb_u8 size_cells)
+{
+    assert((addr_cells == 1 || addr_cells == 2));
+    assert((size_cells == 1 || size_cells == 2));
+
+    if (size_cells == 1) {
+        return DTB_BYTESWAP32(*(reg + addr_cells));
+    } else {
+        dtb_u64 reg_be;
+        dtb_memcpy(&reg_be, reg + addr_cells, size_cells * sizeof(dtb_u32));
+        return DTB_BYTESWAP64(reg_be);
+    }
 }
 
 dtb_rsvmap_entry *dtb_first_rsvmap_entry(dtb *devicetree)

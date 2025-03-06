@@ -80,6 +80,12 @@ dtb_node dtb_next_sibling(dtb_node node);
 
 #define dtb_foreach_child(node, name) for (dtb_node name = dtb_first_child(node); name != NULL; name = dtb_next_sibling(name))
 
+#define dtb_foreach_reg(prop, addr_cells, size_cells, reg) for (dtb_u32 *reg = prop+3; reg < dtb_next_token(prop); reg += addr_cells + size_cells)
+
+dtb_u64 dtb_reg_start(dtb_u32 *reg, dtb_u8 addr_cells);
+
+dtb_u64 dtb_reg_size(dtb_u32 *reg, dtb_u8 addr_cells, dtb_u8 size_cells);
+
 dtb_rsvmap_entry *dtb_first_rsvmap_entry(dtb *devicetree);
 
 dtb_rsvmap_entry *dtb_next_rsvmap_entry(dtb_rsvmap_entry *entry);
