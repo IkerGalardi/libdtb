@@ -100,7 +100,7 @@ int main(int argc, char **argv)
     print_test_result("qemu-virt: '/pmu' property 'compatible'", correct_compatible);
 
     bool found_dma_coherent = false;
-    bool found_reg = false;
+    bool correct_reg = false;
     correct_compatible = false;
     dtb_foreach_property(fw_cfg, prop) {
         char *propname = dtb_property_name(devicetree, prop);
@@ -108,17 +108,21 @@ int main(int argc, char **argv)
         if (strcmp(propname, "dma-coherent") == 0) {
             found_dma_coherent = true;
         } else if (strcmp(propname, "reg") == 0) {
-            found_reg = true;
+            dtb_foreach_reg(prop, 2, 2, reg) {
+                dtb_u64 start = dtb_reg_start(reg, 2);
+                dtb_u64 size  = dtb_reg_size(reg, 2, 2);
+                correct_reg = start == 0x10100000 && size == 0x18;
+            }
         } else if (strcmp(propname, "compatible") == 0) {
             correct_compatible = strcmp(dtb_property_string(prop), "qemu,fw-cfg-mmio") == 0;
         }
     }
     print_test_result("qemu-virt: '/fw-cfg' property 'dma-coherent'", found_dma_coherent);
-    print_test_result("qemu-virt: '/fw-cfg' property 'reg'", found_reg);
+    print_test_result("qemu-virt: '/fw-cfg' property 'reg'", correct_reg);
     print_test_result("qemu-virt: '/fw-cfg' property 'compatible'", correct_compatible);
 
     bool correct_bank_width = false;
-    found_reg = false;
+    correct_reg = false;
     correct_compatible = false;
     dtb_foreach_property(flash, prop) {
         char *propname = dtb_property_name(devicetree, prop);
@@ -126,13 +130,13 @@ int main(int argc, char **argv)
         if (strcmp(propname, "bank-width") == 0) {
             correct_bank_width = dtb_property_uint32(prop) == 0x04;
         } else if (strcmp(propname, "reg") == 0) {
-            found_reg = true;
+            correct_reg = true;
         } else if (strcmp(propname, "compatible") == 0) {
             correct_compatible = strcmp(dtb_property_string(prop), "cfi-flash") == 0;
         }
     }
     print_test_result("qemu-virt: '/flash' property 'bank-width'", correct_bank_width);
-    print_test_result("qemu-virt: '/flash' property 'reg'", found_reg);
+    print_test_result("qemu-virt: '/flash' property 'reg'", correct_reg);
     print_test_result("qemu-virt: '/flash' property 'compatible'", correct_compatible);
 
     bool found_rng_seed = false;
@@ -229,18 +233,18 @@ int main(int argc, char **argv)
     print_test_result("qemu-virt: '/platform-bus' property 'compatible'", correct_compatible);
 
     bool correct_device_type = false;
-    found_reg = false;
+    correct_reg = false;
     dtb_foreach_property(memory, prop) {
         char *propname = dtb_property_name(devicetree, prop);
 
         if (strcmp(propname, "device_type") == 0) {
             correct_device_type = strcmp(dtb_property_string(prop), "memory") == 0;
         } else if (strcmp(propname, "reg") == 0) {
-            found_reg = true;
+            correct_reg = true;
         }
     }
     print_test_result("qemu-virt: '/memory' property 'device_type'", correct_device_type);
-    print_test_result("qemu-virt: '/memory' property 'reg'", found_reg);
+    print_test_result("qemu-virt: '/memory' property 'reg'", correct_reg);
 
     correct_addr_cells = false;
     correct_size_cells = false;
@@ -262,7 +266,7 @@ int main(int argc, char **argv)
 
     bool correct_phandle = false;
     correct_device_type = false;
-    found_reg = false;
+    correct_reg = false;
     bool correct_status = false;
     correct_compatible = false;
     bool correct_riscv_isa = false;
@@ -275,7 +279,7 @@ int main(int argc, char **argv)
         } else if (strcmp(propname, "device_type") == 0) {
             correct_device_type = strcmp(dtb_property_string(prop), "cpu") == 0;
         } else if (strcmp(propname, "reg") == 0) {
-            found_reg = true;
+            correct_reg = true;
         } else if (strcmp(propname, "status") == 0) {
             correct_status = strcmp(dtb_property_string(prop), "okay") == 0;
         } else if (strcmp(propname, "compatible") == 0) {
@@ -288,7 +292,7 @@ int main(int argc, char **argv)
     }
     print_test_result("qemu-virt: '/cpus/cpu@0' property 'phandle'", correct_phandle);
     print_test_result("qemu-virt: '/cpus/cpu@0' property 'device_type'", correct_device_type);
-    print_test_result("qemu-virt: '/cpus/cpu@0' property 'reg'", found_reg);
+    print_test_result("qemu-virt: '/cpus/cpu@0' property 'reg'", correct_reg);
     print_test_result("qemu-virt: '/cpus/cpu@0' property 'status'", correct_status);
     print_test_result("qemu-virt: '/cpus/cpu@0' property 'compatible'", correct_compatible);
     print_test_result("qemu-virt: '/cpus/cpu@0' property 'riscv,isa'", correct_riscv_isa);
