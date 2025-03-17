@@ -49,7 +49,7 @@ int main(int argc, char **argv)
     dtb_node core0 = test_dtb_find("/cpus/cpu-map/cluster0/core0", "core0");
     dtb_node soc = test_dtb_find("/soc", "soc");
     dtb_node rtc = test_dtb_find("/soc/rtc", "rtc@101000");
-    test_dtb_find("/soc/serial", "serial@10000000");
+    dtb_node serial = test_dtb_find("/soc/serial", "serial@10000000");
     test_dtb_find("/soc/test", "test@100000");
     test_dtb_find("/soc/pci", "pci@30000000");
     test_dtb_find("/soc/virtio_mmio@10008000", "virtio_mmio@10008000");
@@ -351,4 +351,26 @@ int main(int argc, char **argv)
     print_test_result("qemu-virt: '/soc/rtc' property 'interrupt-parent'", correct_interrupt_parent);
     print_test_result("qemu-virt: '/soc/rtc' property 'reg'", correct_reg);
     print_test_result("qemu-virt: '/soc/rtc' property 'compatible'", correct_compatible);
+
+    correct_interrupts = false;
+    correct_interrupt_parent = false;
+    correct_reg = false;
+    correct_compatible = false;
+    dtb_foreach_property(serial, prop) {
+        char *propname = dtb_property_name(devicetree, prop);
+
+        if (strcmp(propname, "interrupts") == 0) {
+            correct_interrupts = dtb_property_uint32(prop) == 0x0a;
+        } else if (strcmp(propname, "interrupt-parent") == 0) {
+            correct_interrupt_parent = dtb_property_uint32(prop) == 0x03;
+        } else if (strcmp(propname, "reg") == 0) {
+            correct_reg = true;
+        } else if (strcmp(propname, "compatible") == 0) {
+            correct_compatible = strcmp(dtb_property_string(prop), "ns16550a") == 0;
+        }
+    }
+    print_test_result("qemu-virt: '/soc/serial' property 'interrupts'", correct_interrupts);
+    print_test_result("qemu-virt: '/soc/serial' property 'interrupt-parent'", correct_interrupt_parent);
+    print_test_result("qemu-virt: '/soc/serial' property 'reg'", correct_reg);
+    print_test_result("qemu-virt: '/soc/serial' property 'compatible'", correct_compatible);
 }
