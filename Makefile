@@ -31,13 +31,21 @@ bin/test_qemu-rvvirt: bin/dtb-san.o bin/utils-san.o test/test_qemu-rvvirt.c test
 	$(CC) -c test/test_qemu-rvvirt.c -o bin/test_qemu-rvvirt.o $(CFLAGS) -ggdb -fsanitize=address,undefined
 	$(CC) -o bin/test_qemu-rvvirt bin/dtb-san.o bin/utils-san.o bin/test_qemu-rvvirt.o -ggdb -fsanitize=address,undefined
 
+bin/test_qemu-a64virt: bin/dtb-san.o bin/utils-san.o test/test_qemu-a64virt.c test/test.h include/dtb/dtb.h
+	$(CC) -c test/test_qemu-a64virt.c -o bin/test_qemu-a64virt.o $(CFLAGS) -ggdb -fsanitize=address,undefined
+	$(CC) -o bin/test_qemu-a64virt bin/dtb-san.o bin/utils-san.o bin/test_qemu-a64virt.o -ggdb -fsanitize=address,undefined
+
 bin/test_utils: bin/utils-san.o test/test_utils.c test/test.h
 	$(CC) -c test/test_utils.c -o bin/test_utils.o -Isrc $(CFLAGS) -ggdb -fsanitize=address,undefined
 	$(CC) -o bin/test_utils bin/utils-san.o bin/test_utils.o -ggdb -fsanitize=address,undefined
 
-test: bin/test_utils bin/test_qemu-rvvirt
+test: bin/test_utils bin/test_qemu-rvvirt bin/test_qemu-a64virt
+	@echo "--- Utilities ------------------------------------------------------------"
 	@ bin/test_utils
+	@echo "--- Qemu RISC-V virtual machine-------------------------------------------"
 	@ bin/test_qemu-rvvirt
+	@echo "--- Qemu Aarch64 virtual machine -----------------------------------------"
+	@ bin/test_qemu-a64virt
 
 clean:
 	rm -f bin/*.o bin/test_utils bin/test_qemu-rvvirt
