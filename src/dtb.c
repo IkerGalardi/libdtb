@@ -161,12 +161,16 @@ char *dtb_property_name(dtb *devicetree, dtb_node node)
 
 dtb_u32 dtb_property_uint32(dtb_property prop)
 {
-    return DTB_BYTESWAP32(*(prop + 3));
+    dtb_u32 value = 0;
+    dtb_memcpy(&value, prop+3, sizeof(dtb_u32));
+    return DTB_BYTESWAP32(value);
 }
 
 dtb_u64 dtb_property_uint64(dtb_property prop)
 {
-    return DTB_BYTESWAP64(*(dtb_u64 *)(prop + 3));
+    dtb_u64 value = 0;
+    dtb_memcpy(&value, prop+3, sizeof(dtb_u64));
+    return DTB_BYTESWAP64(value);
 }
 
 char *dtb_property_string(dtb_property prop)
@@ -181,7 +185,9 @@ char *dtb_property_array(dtb_property prop)
 
 dtb_u32 dtb_property_length(dtb_property prop)
 {
-    return DTB_BYTESWAP32(*(prop + 1));
+    dtb_u32 value = 0;
+    dtb_memcpy(&value, prop+1, sizeof(dtb_u32));
+    return DTB_BYTESWAP32(value);
 }
 
 char *dtb_property_next_string(char *str)
