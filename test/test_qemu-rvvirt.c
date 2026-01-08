@@ -11,7 +11,7 @@ static dtb_node test_dtb_find(const char *name, const char *complete_name)
     bool ok = node != NULL && strcmp(dtb_node_name(node), complete_name) == 0;
 
     char testname[100] = {0};
-    snprintf(testname, 100, "qemu-virt: dtb_find '%s'", name);
+    snprintf(testname, 100, "qemu-rvvirt: dtb_find '%s'", name);
     print_test_result(testname, ok);
 
     return node;
@@ -22,17 +22,17 @@ int main(int argc, char **argv)
     (void)argc;
     (void)argv;
 
-    devicetree = dtb_fromptr(map_device_tree("dtbfiles/qemu-virt.dtb"));
-    print_test_result("qemu-virt: dtb_fromptr", devicetree != NULL);
+    devicetree = dtb_fromptr(map_device_tree("dtbfiles/qemu-rvvirt.dtb"));
+    print_test_result("qemu-rvvirt: dtb_fromptr", devicetree != NULL);
 
     bool has_rsvmap_entries = false;
     dtb_foreach_rsvmap_entry(devicetree, entry) {
         has_rsvmap_entries = true;
     }
-    print_test_result("qemu-virt: dtb_foreach_rsvmap_entry", has_rsvmap_entries == false);
+    print_test_result("qemu-rvvirt: dtb_foreach_rsvmap_entry", has_rsvmap_entries == false);
 
     dtb_node root_node = dtb_find(devicetree, "/");
-    print_test_result("qemu-virt: dtb_find '/'", root_node != NULL);
+    print_test_result("qemu-rvvirt: dtb_find '/'", root_node != NULL);
 
     dtb_node pmu_node = test_dtb_find("/pmu", "pmu");
     dtb_node fw_cfg = test_dtb_find("/fw-cfg", "fw-cfg@10100000");
@@ -80,10 +80,10 @@ int main(int argc, char **argv)
             correct_model = strcmp(dtb_property_string(prop), "riscv-virtio,qemu") == 0;
         }
     }
-    print_test_result("qemu-virt: '/' property '#address-cells'", correct_addr_cells);
-    print_test_result("qemu-virt: '/' property '#size-cells'", correct_size_cells);
-    print_test_result("qemu-virt: '/' property 'compatible'", correct_compatible);
-    print_test_result("qemu-virt: '/' property 'model'", correct_model);
+    print_test_result("qemu-rvvirt: '/' property '#address-cells'", correct_addr_cells);
+    print_test_result("qemu-rvvirt: '/' property '#size-cells'", correct_size_cells);
+    print_test_result("qemu-rvvirt: '/' property 'compatible'", correct_compatible);
+    print_test_result("qemu-rvvirt: '/' property 'model'", correct_model);
 
     bool found_riscv_evt_mhpmcounters = false;
     correct_compatible = false;
@@ -96,8 +96,8 @@ int main(int argc, char **argv)
             correct_compatible = strcmp(dtb_property_string(prop), "riscv,pmu") == 0;
         }
     }
-    print_test_result("qemu-virt: '/pmu' property 'riscv,event-to-mhpmcounters'", found_riscv_evt_mhpmcounters);
-    print_test_result("qemu-virt: '/pmu' property 'compatible'", correct_compatible);
+    print_test_result("qemu-rvvirt: '/pmu' property 'riscv,event-to-mhpmcounters'", found_riscv_evt_mhpmcounters);
+    print_test_result("qemu-rvvirt: '/pmu' property 'compatible'", correct_compatible);
 
     bool found_dma_coherent = false;
     bool correct_reg = false;
@@ -117,9 +117,9 @@ int main(int argc, char **argv)
             correct_compatible = strcmp(dtb_property_string(prop), "qemu,fw-cfg-mmio") == 0;
         }
     }
-    print_test_result("qemu-virt: '/fw-cfg' property 'dma-coherent'", found_dma_coherent);
-    print_test_result("qemu-virt: '/fw-cfg' property 'reg'", correct_reg);
-    print_test_result("qemu-virt: '/fw-cfg' property 'compatible'", correct_compatible);
+    print_test_result("qemu-rvvirt: '/fw-cfg' property 'dma-coherent'", found_dma_coherent);
+    print_test_result("qemu-rvvirt: '/fw-cfg' property 'reg'", correct_reg);
+    print_test_result("qemu-rvvirt: '/fw-cfg' property 'compatible'", correct_compatible);
 
     bool correct_bank_width = false;
     correct_reg = false;
@@ -135,9 +135,9 @@ int main(int argc, char **argv)
             correct_compatible = strcmp(dtb_property_string(prop), "cfi-flash") == 0;
         }
     }
-    print_test_result("qemu-virt: '/flash' property 'bank-width'", correct_bank_width);
-    print_test_result("qemu-virt: '/flash' property 'reg'", correct_reg);
-    print_test_result("qemu-virt: '/flash' property 'compatible'", correct_compatible);
+    print_test_result("qemu-rvvirt: '/flash' property 'bank-width'", correct_bank_width);
+    print_test_result("qemu-rvvirt: '/flash' property 'reg'", correct_reg);
+    print_test_result("qemu-rvvirt: '/flash' property 'compatible'", correct_compatible);
 
     bool found_rng_seed = false;
     bool correct_stdout_path = false;
@@ -150,8 +150,8 @@ int main(int argc, char **argv)
             correct_stdout_path = strcmp(dtb_property_string(prop), "/soc/serial@10000000") == 0;
         }
     }
-    print_test_result("qemu-virt: '/chosen' property 'rng-seed'", found_rng_seed);
-    print_test_result("qemu-virt: '/chosen' property 'stdout-path'", correct_stdout_path);
+    print_test_result("qemu-rvvirt: '/chosen' property 'rng-seed'", found_rng_seed);
+    print_test_result("qemu-rvvirt: '/chosen' property 'stdout-path'", correct_stdout_path);
 
     bool correct_value = false;
     bool correct_offset = false;
@@ -170,10 +170,10 @@ int main(int argc, char **argv)
             correct_compatible = strcmp(dtb_property_string(prop), "syscon-poweroff") == 0;
         }
     }
-    print_test_result("qemu-virt: '/poweroff' property 'value'", correct_value);
-    print_test_result("qemu-virt: '/poweroff' property 'offset'", correct_offset);
-    print_test_result("qemu-virt: '/poweroff' property 'regmap'", correct_regmap);
-    print_test_result("qemu-virt: '/poweroff' property 'compatible'", correct_compatible);
+    print_test_result("qemu-rvvirt: '/poweroff' property 'value'", correct_value);
+    print_test_result("qemu-rvvirt: '/poweroff' property 'offset'", correct_offset);
+    print_test_result("qemu-rvvirt: '/poweroff' property 'regmap'", correct_regmap);
+    print_test_result("qemu-rvvirt: '/poweroff' property 'compatible'", correct_compatible);
 
     correct_value = false;
     correct_offset = false;
@@ -192,10 +192,10 @@ int main(int argc, char **argv)
             correct_compatible = strcmp(dtb_property_string(prop), "syscon-reboot") == 0;
         }
     }
-    print_test_result("qemu-virt: '/reboot' property 'value'", correct_value);
-    print_test_result("qemu-virt: '/reboot' property 'offset'", correct_offset);
-    print_test_result("qemu-virt: '/reboot' property 'regmap'", correct_regmap);
-    print_test_result("qemu-virt: '/reboot' property 'compatible'", correct_compatible);
+    print_test_result("qemu-rvvirt: '/reboot' property 'value'", correct_value);
+    print_test_result("qemu-rvvirt: '/reboot' property 'offset'", correct_offset);
+    print_test_result("qemu-rvvirt: '/reboot' property 'regmap'", correct_regmap);
+    print_test_result("qemu-rvvirt: '/reboot' property 'compatible'", correct_compatible);
 
     bool correct_interrupt_parent = false;
     bool found_ranges = false;
@@ -226,11 +226,11 @@ int main(int argc, char **argv)
             correct_compatible = found_qemu && found_simple;
         }
     }
-    print_test_result("qemu-virt: '/platform-bus' property 'interrupt-parent'", correct_interrupt_parent);
-    print_test_result("qemu-virt: '/platform-bus' property 'ranges'", found_ranges);
-    print_test_result("qemu-virt: '/platform-bus' property '#address-cells'", correct_addr_cells);
-    print_test_result("qemu-virt: '/platform-bus' property '#size-cells'", correct_size_cells);
-    print_test_result("qemu-virt: '/platform-bus' property 'compatible'", correct_compatible);
+    print_test_result("qemu-rvvirt: '/platform-bus' property 'interrupt-parent'", correct_interrupt_parent);
+    print_test_result("qemu-rvvirt: '/platform-bus' property 'ranges'", found_ranges);
+    print_test_result("qemu-rvvirt: '/platform-bus' property '#address-cells'", correct_addr_cells);
+    print_test_result("qemu-rvvirt: '/platform-bus' property '#size-cells'", correct_size_cells);
+    print_test_result("qemu-rvvirt: '/platform-bus' property 'compatible'", correct_compatible);
 
     bool correct_device_type = false;
     correct_reg = false;
@@ -243,8 +243,8 @@ int main(int argc, char **argv)
             correct_reg = true;
         }
     }
-    print_test_result("qemu-virt: '/memory' property 'device_type'", correct_device_type);
-    print_test_result("qemu-virt: '/memory' property 'reg'", correct_reg);
+    print_test_result("qemu-rvvirt: '/memory' property 'device_type'", correct_device_type);
+    print_test_result("qemu-rvvirt: '/memory' property 'reg'", correct_reg);
 
     correct_addr_cells = false;
     correct_size_cells = false;
@@ -260,9 +260,9 @@ int main(int argc, char **argv)
             correct_timebase_frequency = dtb_property_uint32(prop) == 0x989680;
         }
     }
-    print_test_result("qemu-virt: '/cpus' property '#address-cells'", correct_addr_cells);
-    print_test_result("qemu-virt: '/cpus' property '#size-cells'", correct_size_cells);
-    print_test_result("qemu-virt: '/cpus' property 'timebase-frequency'", correct_timebase_frequency);
+    print_test_result("qemu-rvvirt: '/cpus' property '#address-cells'", correct_addr_cells);
+    print_test_result("qemu-rvvirt: '/cpus' property '#size-cells'", correct_size_cells);
+    print_test_result("qemu-rvvirt: '/cpus' property 'timebase-frequency'", correct_timebase_frequency);
 
     bool correct_phandle = false;
     correct_device_type = false;
@@ -290,13 +290,13 @@ int main(int argc, char **argv)
             correct_mmu_type = strcmp(dtb_property_string(prop), "riscv,sv48") == 0;
         }
     }
-    print_test_result("qemu-virt: '/cpus/cpu@0' property 'phandle'", correct_phandle);
-    print_test_result("qemu-virt: '/cpus/cpu@0' property 'device_type'", correct_device_type);
-    print_test_result("qemu-virt: '/cpus/cpu@0' property 'reg'", correct_reg);
-    print_test_result("qemu-virt: '/cpus/cpu@0' property 'status'", correct_status);
-    print_test_result("qemu-virt: '/cpus/cpu@0' property 'compatible'", correct_compatible);
-    print_test_result("qemu-virt: '/cpus/cpu@0' property 'riscv,isa'", correct_riscv_isa);
-    print_test_result("qemu-virt: '/cpus/cpu@0' property 'mmu-type'", correct_mmu_type);
+    print_test_result("qemu-rvvirt: '/cpus/cpu@0' property 'phandle'", correct_phandle);
+    print_test_result("qemu-rvvirt: '/cpus/cpu@0' property 'device_type'", correct_device_type);
+    print_test_result("qemu-rvvirt: '/cpus/cpu@0' property 'reg'", correct_reg);
+    print_test_result("qemu-rvvirt: '/cpus/cpu@0' property 'status'", correct_status);
+    print_test_result("qemu-rvvirt: '/cpus/cpu@0' property 'compatible'", correct_compatible);
+    print_test_result("qemu-rvvirt: '/cpus/cpu@0' property 'riscv,isa'", correct_riscv_isa);
+    print_test_result("qemu-rvvirt: '/cpus/cpu@0' property 'mmu-type'", correct_mmu_type);
 
     bool correct_cpu = false;
     dtb_foreach_property(core0, prop) {
@@ -306,7 +306,7 @@ int main(int argc, char **argv)
             correct_cpu = dtb_property_uint32(prop) == 0x01;
         }
     }
-    print_test_result("qemu-virt: '/cpus/cpu-map/cluster0/core0' property 'cpu'", correct_cpu);
+    print_test_result("qemu-rvvirt: '/cpus/cpu-map/cluster0/core0' property 'cpu'", correct_cpu);
 
     correct_addr_cells = false;
     correct_size_cells = false;
@@ -325,10 +325,10 @@ int main(int argc, char **argv)
             found_ranges = true;
         }
     }
-    print_test_result("qemu-virt: '/soc' property '#address-cells'", correct_addr_cells);
-    print_test_result("qemu-virt: '/soc' property '#size-cells'", correct_size_cells);
-    print_test_result("qemu-virt: '/soc' property 'compatible'", correct_compatible);
-    print_test_result("qemu-virt: '/soc' property 'ranges'", found_ranges);
+    print_test_result("qemu-rvvirt: '/soc' property '#address-cells'", correct_addr_cells);
+    print_test_result("qemu-rvvirt: '/soc' property '#size-cells'", correct_size_cells);
+    print_test_result("qemu-rvvirt: '/soc' property 'compatible'", correct_compatible);
+    print_test_result("qemu-rvvirt: '/soc' property 'ranges'", found_ranges);
 
     bool correct_interrupts = false;
     correct_interrupt_parent = false;
@@ -347,10 +347,10 @@ int main(int argc, char **argv)
             correct_compatible = strcmp(dtb_property_string(prop), "google,goldfish-rtc") == 0;
         }
     }
-    print_test_result("qemu-virt: '/soc/rtc' property 'interrupts'", correct_interrupts);
-    print_test_result("qemu-virt: '/soc/rtc' property 'interrupt-parent'", correct_interrupt_parent);
-    print_test_result("qemu-virt: '/soc/rtc' property 'reg'", correct_reg);
-    print_test_result("qemu-virt: '/soc/rtc' property 'compatible'", correct_compatible);
+    print_test_result("qemu-rvvirt: '/soc/rtc' property 'interrupts'", correct_interrupts);
+    print_test_result("qemu-rvvirt: '/soc/rtc' property 'interrupt-parent'", correct_interrupt_parent);
+    print_test_result("qemu-rvvirt: '/soc/rtc' property 'reg'", correct_reg);
+    print_test_result("qemu-rvvirt: '/soc/rtc' property 'compatible'", correct_compatible);
 
     correct_interrupts = false;
     correct_interrupt_parent = false;
@@ -369,8 +369,8 @@ int main(int argc, char **argv)
             correct_compatible = strcmp(dtb_property_string(prop), "ns16550a") == 0;
         }
     }
-    print_test_result("qemu-virt: '/soc/serial' property 'interrupts'", correct_interrupts);
-    print_test_result("qemu-virt: '/soc/serial' property 'interrupt-parent'", correct_interrupt_parent);
-    print_test_result("qemu-virt: '/soc/serial' property 'reg'", correct_reg);
-    print_test_result("qemu-virt: '/soc/serial' property 'compatible'", correct_compatible);
+    print_test_result("qemu-rvvirt: '/soc/serial' property 'interrupts'", correct_interrupts);
+    print_test_result("qemu-rvvirt: '/soc/serial' property 'interrupt-parent'", correct_interrupt_parent);
+    print_test_result("qemu-rvvirt: '/soc/serial' property 'reg'", correct_reg);
+    print_test_result("qemu-rvvirt: '/soc/serial' property 'compatible'", correct_compatible);
 }
